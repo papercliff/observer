@@ -14,6 +14,7 @@
                  (dt/now)
                  60))]
     (timbre/info "stories" stories)
-    (let [tweet (text/tweet stories)]
-      (twitter-api/tweet tweet)
-      (mastodon-api/post tweet))))
+    (doseq [words stories]
+      (let [post (text/post words)]
+        (twitter-api/tweet post)
+        (mastodon-api/post post)))))

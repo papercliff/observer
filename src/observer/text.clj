@@ -1,13 +1,9 @@
 (ns observer.text
-  (:require [clojure.string :as s]
-            [taoensso.timbre :as timbre]))
+  (:require [clojure.string :as s]))
 
-(defn tweet [stories]
-  (let [res (str
-              (->> stories
-                   (map (partial s/join " · "))
-                   (s/join "\n"))
-              "\n"
-              "#hourly #news #keywords")]
-    (timbre/info "tweet" res)
-    res))
+(defn post [words]
+  (str
+    (s/join " · " words)
+    "\n"
+    "https://news.google.com/search?q="
+    (s/join "+" words)))
