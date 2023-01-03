@@ -5,5 +5,5 @@
   (str
     (s/join " · " words)
     "\n"
-    "https://google.com/search?q="
+    "https://news.google.com/search?q="
     (s/join "+" words)))
