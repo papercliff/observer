@@ -16,10 +16,7 @@
               single-day-actions-fmt
               (dt/->start-of-prev-day-str now))]
     (timbre/info "loading" url)
-    (:body
-      (client/get
-        url
-        {:throw-exceptions false}))))
+    (-> url client/get :body)))
 
 (defn clone-animated-graph []
   (timbre/info "cloning github repo")
