@@ -1,5 +1,6 @@
 (ns observer.apis.twitter
   (:require [environ.core :as env]
+            [observer.fs :as fs]
             [taoensso.timbre :as timbre]
             [twitter.api.restful :as restful]
             [twitter.oauth :as oauth]
@@ -19,10 +20,10 @@
     :oauth-creds my-creds
     :params {:status text}))
 
-(defn image-tweet [abs-png-path]
-  (timbre/info "posting image on twitter" abs-png-path)
+(defn image-tweet []
+  (timbre/info "posting image on twitter")
   (Thread/sleep 5000)
   (restful/statuses-update-with-media
     :oauth-creds my-creds
-    :body [(request/file-body-part abs-png-path)
+    :body [(request/file-body-part fs/screenshot-abs-path)
            (request/status-body-part "#daily #news #keywords")]))

@@ -10,6 +10,8 @@
                  [environ "1.2.0"]
                  [etaoin "1.0.39"]
                  [com.taoensso/timbre "6.0.2"]
+                 [dev.nubank/clj-github "0.6.2"]
+                 [me.raynes/fs "1.4.6"]
                  [org.clojure/clojure "1.11.1"]
                  [org.clojure/data.json "2.4.0"]
                  [org.slf4j/slf4j-log4j12 "2.0.5"]

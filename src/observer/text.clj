@@ -16,6 +16,7 @@
     (s/join "+" words)))
 
 (defn -main []
+  (timbre/info "starting text task")
   (when-let [stories
              (ppf-api/new-important-clusters
                (dt/minutes-ago
@@ -24,5 +25,6 @@
     (timbre/info "stories" stories)
     (doseq [words stories]
       (let [post (content words)]
-        (twitter-api/text-tweet post)
-        (mastodon-api/text-twoot post)))))
+        (mastodon-api/text-twoot post)
+        (twitter-api/text-tweet post))))
+  (timbre/info "text task completed"))
