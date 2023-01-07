@@ -1,9 +1,28 @@
 (ns observer.text
-  (:require [clojure.string :as s]))
+  (:require
+    [clojure.string :as s]
+    [observer.apis.mastodon :as mastodon-api]
+    [observer.apis.papercliff :as ppf-api]
+    [observer.apis.twitter :as twitter-api]
+    [observer.date-time :as dt]
+    [taoensso.timbre :as timbre])
+  (:gen-class))
 
-(defn post [words]
+(defn- content [words]
   (str
     (s/join " · " words)
     "\n"
     "https://news.google.com/search?q="
     (s/join "+" words)))
+
+(defn -main []
+  (when-let [stories
+             (ppf-api/new-important-clusters
+               (dt/minutes-ago
+                 (dt/now)
+                 60))]
+    (timbre/info "stories" stories)
+    (doseq [words stories]
+      (let [post (content words)]
+        (twitter-api/text-tweet post)
+        (mastodon-api/text-twoot post)))))
