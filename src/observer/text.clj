@@ -1,11 +1,10 @@
 (ns observer.text
-  (:require
-    [clojure.string :as s]
-    [observer.apis.mastodon :as mastodon-api]
-    [observer.apis.papercliff :as ppf-api]
-    [observer.apis.twitter :as twitter-api]
-    [observer.date-time :as dt]
-    [taoensso.timbre :as timbre])
+  (:require [clojure.string :as s]
+            [observer.apis.mastodon :as mastodon-api]
+            [observer.apis.papercliff :as ppf-api]
+            [observer.apis.twitter :as twitter-api]
+            [observer.date-time :as dt]
+            [taoensso.timbre :as timbre])
   (:gen-class))
 
 (defn- content [words]

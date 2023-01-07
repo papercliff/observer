@@ -1,12 +1,11 @@
 (ns observer.apis.github
-  (:require
-    [clj-github.httpkit-client :as github-client]
-    [clj-github.repository :as github-repo]
-    [clj-http.client :as client]
-    [environ.core :as env]
-    [me.raynes.fs :as raynes]
-    [observer.date-time :as dt]
-    [taoensso.timbre :as timbre]))
+  (:require [clj-github.httpkit-client :as github-client]
+            [clj-github.repository :as github-repo]
+            [clj-http.client :as client]
+            [environ.core :as env]
+            [me.raynes.fs :as raynes]
+            [observer.date-time :as dt]
+            [taoensso.timbre :as timbre]))
 
 (def single-day-actions-fmt
   "https://raw.githubusercontent.com/papercliff/historical-data/master/transformed/%s-single-day-actions.json")
