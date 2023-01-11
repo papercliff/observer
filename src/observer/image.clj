@@ -1,5 +1,6 @@
 (ns observer.image
   (:require [etaoin.api :as e]
+            [observer.apis.facebook :as facebook-api]
             [observer.apis.github :as github-api]
             [observer.apis.mastodon :as mastodon-api]
             [observer.apis.twitter :as twitter-api]
@@ -33,4 +34,5 @@
   (take-screenshot)
   (mastodon-api/image-twoot)
   (twitter-api/image-tweet)
+  (facebook-api/image-post)
   (timbre/info "text task completed"))

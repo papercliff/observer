@@ -1,5 +1,6 @@
 (ns observer.text
   (:require [clojure.string :as s]
+            [observer.apis.facebook :as facebook-api]
             [observer.apis.mastodon :as mastodon-api]
             [observer.apis.papercliff :as ppf-api]
             [observer.apis.twitter :as twitter-api]
@@ -25,5 +26,6 @@
     (doseq [words stories]
       (let [post (content words)]
         (mastodon-api/text-twoot post)
-        (twitter-api/text-tweet post))))
+        (twitter-api/text-tweet post)
+        (facebook-api/text-post post))))
   (timbre/info "text task completed"))
