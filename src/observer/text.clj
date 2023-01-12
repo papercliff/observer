@@ -27,5 +27,5 @@
       (let [post (content words)]
         (mastodon-api/text-twoot post)
         (twitter-api/text-tweet post)
-        (facebook-api/text-post post))))
+        (facebook-api/text-post (str post "&hl=en-US&gl=US&ceid=US:en")))))
   (timbre/info "text task completed"))
