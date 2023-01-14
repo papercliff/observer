@@ -19,7 +19,7 @@
          fs/absolute-path
          (str "file://")
          (e/go driver))
-    (e/wait (+ 10 (rand 20)))
+    (e/wait (+ 60 (rand 20)))
     (e/screenshot driver fs/screenshot-abs-path)
     (e/wait 10)
     (e/quit driver)))
