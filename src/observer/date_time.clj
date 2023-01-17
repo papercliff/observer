@@ -24,5 +24,10 @@
     (time-f/formatter :date)
     (at-start-of-prev-day dt)))
 
+(defn ->prev-day-full-str [dt]
+  (time-f/unparse
+    (time-f/formatter "EEEEE, MMMMM d, yyyy")
+    (at-start-of-prev-day dt)))
+
 (defn now []
   (time/now))

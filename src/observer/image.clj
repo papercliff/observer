@@ -3,6 +3,7 @@
             [observer.apis.facebook :as facebook-api]
             [observer.apis.github :as github-api]
             [observer.apis.mastodon :as mastodon-api]
+            [observer.apis.reddit :as reddit-api]
             [observer.apis.twitter :as twitter-api]
             [observer.date-time :as dt]
             [observer.fs :as fs]
@@ -35,4 +36,5 @@
   (mastodon-api/image-twoot)
   (twitter-api/image-tweet)
   (facebook-api/image-post)
+  (reddit-api/image-post)
   (timbre/info "text task completed"))

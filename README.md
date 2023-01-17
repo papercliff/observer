@@ -1,13 +1,8 @@
 # observer
 
-This script (`observer.core/-main`) runs every hour, identifies new stories, and
-posts them on [Twitter](https://twitter.com/papercliff_api)
-and [Mastodon](https://newsie.social/@papercliff).
+These scripts create papercliff-related content to social media.
 
-To be executed successfully, the following environment variables need to be set:
-* `X_RAPIDAPI_KEY`
-* `TWITTER_API_KEY`
-* `TWITTER_API_KEY_SECRET`
-* `TWITTER_API_ACCESS_TOKEN`
-* `TWITTER_API_ACCESS_TOKEN_SECRET`
-* `MASTODON_ACCESS_TOKEN`
+* [Facebook](https://www.facebook.com/profile.php?id=100089193848232)
+* [Mastodon](https://newsie.social/@papercliff)
+* [Reddit](https://www.reddit.com/r/papercliff/)
+* [Twitter](https://twitter.com/papercliff_api)
