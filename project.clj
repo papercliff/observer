@@ -5,7 +5,6 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[aysylu/loom "1.0.2"]
                  [clj-http "3.12.3"]
-                 [clj-oauth "1.5.5"]
                  [clj-time "0.15.2"]
                  [environ "1.2.0"]
                  [etaoin "1.0.39"]
