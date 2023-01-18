@@ -25,15 +25,18 @@
     (timbre/info "combinations" res)
     res))
 
+(def combinations-memo
+  (memoize combinations))
+
 (defn- combinations-since [now]
-  (combinations
+  (combinations-memo
     {:from (dt/->date-hour-str
              (dt/minutes-ago
                now
                (* 2.5 60)))}))
 
 (defn- combinations-until [now terms]
-  (combinations
+  (combinations-memo
     {:to (dt/->date-hour-str
            (dt/minutes-ago
              now
