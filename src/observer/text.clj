@@ -13,9 +13,7 @@
   (timbre/info "starting text task")
   (when-let [stories
              (ppf-api/new-important-clusters
-               (dt/minutes-ago
-                 (dt/now)
-                 60))]
+               (dt/now))]
     (timbre/info "stories" stories)
     (doseq [words stories]
       (let [key-words (s/join " · " words)

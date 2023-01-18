@@ -25,13 +25,19 @@
     (timbre/info "combinations" res)
     res))
 
-(defn- combinations-since [time]
+(defn- combinations-since [now]
   (combinations
-    {:from (dt/->date-hour-str time)}))
+    {:from (dt/->date-hour-str
+             (dt/minutes-ago
+               now
+               (* 2.5 60)))}))
 
-(defn- combinations-until [time terms]
+(defn- combinations-until [now terms]
   (combinations
-    {:to (dt/->date-hour-str time)
+    {:to (dt/->date-hour-str
+           (dt/minutes-ago
+             now
+             60))
      :terms (s/join "-" terms)}))
 
 (defn- story->term-pairs [story]
@@ -40,8 +46,8 @@
      [a c]
      [b c]]))
 
-(defn new-important-clusters [time]
-  (->> time
+(defn new-important-clusters [now]
+  (->> now
        combinations-since
        (filter
          (fn [{:keys [agencies]}]
@@ -51,7 +57,7 @@
          (fn [story]
            (->> story
                 story->term-pairs
-                (mapcat #(combinations-until time %))
+                (mapcat #(combinations-until now %))
                 (every?
                   (fn [{:keys [agencies]}]
                     (< agencies 3))))))
