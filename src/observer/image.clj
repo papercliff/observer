@@ -2,6 +2,7 @@
   (:require [etaoin.api :as e]
             [observer.apis.facebook :as facebook-api]
             [observer.apis.github :as github-api]
+            [observer.apis.linkedin :as linkedin-api]
             [observer.apis.mastodon :as mastodon-api]
             [observer.apis.reddit :as reddit-api]
             [observer.apis.twitter :as twitter-api]
@@ -37,4 +38,5 @@
   (twitter-api/image-tweet)
   (facebook-api/image-post)
   (reddit-api/image-post)
+  (linkedin-api/image-post)
   (timbre/info "text task completed"))
