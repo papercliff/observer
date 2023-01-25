@@ -28,6 +28,7 @@
 
 (defn -main []
   (timbre/info "starting image task")
+  (fs/delete-res-dir)
   (github-api/clone-animated-graph)
   (->> (dt/now)
        github-api/load-single-day-actions
