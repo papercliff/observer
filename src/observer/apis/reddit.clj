@@ -3,7 +3,6 @@
             [clojure.data.json :as json]
             [environ.core :as env]
             [observer.apis.imgur :as imgur-api]
-            [observer.date-time :as dt]
             [taoensso.timbre :as timbre]))
 
 (defn- access-token []
@@ -36,14 +35,15 @@
                      :text description
                      :sr "r/papercliff"}})))
 
-(defn image-post []
+(defn image-post [title]
   (let [headers (post-headers)]
     (timbre/info "posting image to reddit")
     (Thread/sleep 5000)
     (client/post
       "https://oauth.reddit.com/api/submit"
       {:headers headers
-       :form-params {:title (dt/->prev-day-full-str (dt/now))
+       :form-params {:title title
                      :kind "link"
-                     :url (imgur-api/upload-image)
+                     :url (imgur-api/upload-image
+                            (str "News keywords for " title))
                      :sr "r/papercliff"}})))

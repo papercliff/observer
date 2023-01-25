@@ -11,6 +11,9 @@
             [taoensso.timbre :as timbre])
   (:gen-class))
 
+(def hashtags-str
+  "#daily #news #keywords")
+
 (defn take-screenshot []
   (timbre/info "taking screenshot")
   (let [driver (e/chrome
@@ -30,14 +33,19 @@
   (timbre/info "starting image task")
   (fs/delete-res-dir)
   (github-api/clone-animated-graph)
-  (->> (dt/now)
-       github-api/load-single-day-actions
-       (format "const singleDayActions = %s;")
-       (fs/save-content "single-day-actions.js"))
-  (take-screenshot)
-  (mastodon-api/image-twoot)
-  (twitter-api/image-tweet)
-  (facebook-api/image-post)
-  (reddit-api/image-post)
-  (linkedin-api/image-post)
+  (let [now (dt/now)
+        full-day-str (dt/->prev-day-full-str now)
+        full-day-with-hashtags (str full-day-str
+                                    "\n"
+                                    hashtags-str)]
+    (->> now
+         github-api/load-single-day-actions
+         (format "const singleDayActions = %s;")
+         (fs/save-content "single-day-actions.js"))
+    (take-screenshot)
+    (mastodon-api/image-twoot full-day-with-hashtags)
+    (twitter-api/image-tweet full-day-with-hashtags)
+    (facebook-api/image-post full-day-with-hashtags)
+    (reddit-api/image-post full-day-str)
+    (linkedin-api/image-post full-day-with-hashtags))
   (timbre/info "text task completed"))

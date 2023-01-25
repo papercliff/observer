@@ -27,7 +27,7 @@
                        {})
                      {:status text})})))
 
-(defn image-twoot []
+(defn image-twoot [title]
   (timbre/info "posting image on mastodon")
   (Thread/sleep 5000)
   (-> "https://newsie.social/api/v1/media"
@@ -39,4 +39,4 @@
       :body
       (json/read-str :key-fn keyword)
       :id
-      (text-twoot "#daily #news #keywords")))
+      (text-twoot title)))

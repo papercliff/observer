@@ -26,7 +26,7 @@
         {:message text
          :access_token access-token})})))
 
-(defn image-post []
+(defn image-post [title]
   (timbre/info "posting image on facebook")
   (Thread/sleep 5000)
   (-> "https://graph.facebook.com/me/photos"
@@ -40,4 +40,4 @@
       :body
       (json/read-str :key-fn keyword)
       :id
-      (text-post "#daily #news #keywords")))
+      (text-post title)))

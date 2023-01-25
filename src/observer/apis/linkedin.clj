@@ -64,7 +64,7 @@
     {:headers headers
      :body (io/file fs/screenshot-abs-path)}))
 
-(defn image-post []
+(defn image-post [title]
   (let [{:keys [uploadUrl image]} (prepare-image)]
     (upload-image uploadUrl)
-    (text-post image "#daily #news #keywords")))
+    (text-post image title)))

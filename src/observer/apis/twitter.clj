@@ -20,10 +20,10 @@
     :oauth-creds my-creds
     :params {:status text}))
 
-(defn image-tweet []
+(defn image-tweet [title]
   (timbre/info "posting image on twitter")
   (Thread/sleep 5000)
   (restful/statuses-update-with-media
     :oauth-creds my-creds
     :body [(request/file-body-part fs/screenshot-abs-path)
-           (request/status-body-part "#daily #news #keywords")]))
+           (request/status-body-part title)]))
