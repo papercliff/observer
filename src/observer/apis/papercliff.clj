@@ -70,5 +70,4 @@
        (filter #(> (count %) 3))
        (map sort)
        (sort-by #(vector (/ 1 (count %)) (s/join " " %)))
-       (take 3)
        seq))
