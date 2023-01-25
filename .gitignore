@@ -13,4 +13,3 @@ pom.xml.asc
 /.idea/
 /observer.iml
 .env
-/resources/
