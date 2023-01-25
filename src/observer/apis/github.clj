@@ -5,6 +5,7 @@
             [environ.core :as env]
             [me.raynes.fs :as raynes]
             [observer.date-time :as dt]
+            [observer.fs :as fs]
             [taoensso.timbre :as timbre]))
 
 (def single-day-actions-fmt
@@ -22,4 +23,4 @@
   (-> {:token (env/env :github-token)}
       github-client/new-client
       (github-repo/clone "papercliff" "animated-graph")
-      (raynes/copy-dir "resources")))
+      (raynes/copy-dir fs/res-dir-path)))
