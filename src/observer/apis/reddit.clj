@@ -13,7 +13,7 @@
         {:headers {"User-Agent" "papercliff-observer"}
          :basic-auth [(env/env :reddit-client-id) (env/env :reddit-secret)]
          :form-params {:grant_type "password"
-                       :username "mrdimosthenis"
+                       :username "papercliff_api"
                        :password (env/env :reddit-password)}})
       :body
       (json/read-str :key-fn keyword)
