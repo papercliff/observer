@@ -18,15 +18,15 @@
     (timbre/info "stories" stories)
     (doseq [words stories]
       (let [key-words (s/join " · " words)
-            base-link (str "https://news.google.com/search?q="
-                           (s/join "+" words))
-            single-base-text (str key-words "\n" base-link)]
-        (mastodon-api/text-twoot single-base-text)
-        (twitter-api/text-tweet single-base-text)
-        (facebook-api/text-post
-          (str single-base-text "&hl=en-US&gl=US&ceid=US:en"))
+            link (str "https://news.google.com/search?q="
+                      (s/join "+" words)
+                      "&hl=en-US&gl=US&ceid=US:en")
+            keywords+link (str key-words "\n" link)]
+        (mastodon-api/text-twoot keywords+link)
+        (twitter-api/text-tweet keywords+link)
+        (facebook-api/text-post keywords+link)
         (reddit-api/text-post
           key-words
-          base-link)
-        (linkedin-api/text-post single-base-text))))
+          link)
+        (linkedin-api/text-post keywords+link))))
   (timbre/info "text task completed"))
