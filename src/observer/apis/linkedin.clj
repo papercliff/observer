@@ -7,15 +7,24 @@
             [taoensso.timbre :as timbre]))
 
 (def author
-  "urn:li:person:YO-dZXzoCp")
+  "urn:li:organization:90787929")
 
-(def headers
+(defn- access-token []
+  (timbre/info "getting access token from linkedin")
+  (Thread/sleep 5000)
+  (-> "https://www.linkedin.com/oauth/v2/accessToken"
+      (client/post
+        {:form-params {:grant_type "refresh_token"
+                       :client_id (env/env :linkedin-client-id)
+                       :client_secret (env/env :linkedin-secret)
+                       :refresh_token (env/env :linkedin-refresh-token)}})
+      :body
+      (json/read-str :key-fn keyword)
+      :access_token))
+
+(defn- headers []
   {"LinkedIn-Version" "202301"
-
-   "Authorization"
-   (str
-     "Bearer "
-     (env/env :linkedin-access-token))})
+   "Authorization" (str "Bearer " (access-token))})
 
 (defn text-post
   ([text]
@@ -24,9 +33,8 @@
    (timbre/info "posting text on linkedin" text)
    (Thread/sleep 5000)
    (->> {:author author
-         :container "urn:li:group:9301509"
          :commentary text
-         :visibility "CONTAINER"
+         :visibility "PUBLIC"
          :distribution {:feedDistribution "MAIN_FEED"
                         :targetEntities []
                         :thirdPartyDistributionChannels []}
@@ -38,7 +46,7 @@
             {}))
         json/write-str
         (hash-map :content-type :json
-                  :headers headers
+                  :headers (headers)
                   :body)
         (client/post "https://api.linkedin.com/v2/posts"))))
 
@@ -48,7 +56,7 @@
   (-> "https://api.linkedin.com/rest/images?action=initializeUpload"
       (client/post
         {:content-type :json
-         :headers headers
+         :headers (headers)
          :body (json/write-str
                  {:initializeUploadRequest
                   {:owner author}})})
@@ -61,7 +69,7 @@
   (Thread/sleep 5000)
   (client/put
     upload-url
-    {:headers headers
+    {:headers (headers)
      :body (io/file fs/screenshot-abs-path)}))
 
 (defn image-post [title]
