@@ -26,6 +26,9 @@
   {"LinkedIn-Version" "202301"
    "Authorization" (str "Bearer " (access-token))})
 
+(def headers-memo
+  (memoize headers))
+
 (defn text-post
   ([text]
    (text-post nil text))
@@ -46,7 +49,7 @@
             {}))
         json/write-str
         (hash-map :content-type :json
-                  :headers (headers)
+                  :headers (headers-memo)
                   :body)
         (client/post "https://api.linkedin.com/v2/posts"))))
 
@@ -56,7 +59,7 @@
   (-> "https://api.linkedin.com/rest/images?action=initializeUpload"
       (client/post
         {:content-type :json
-         :headers (headers)
+         :headers (headers-memo)
          :body (json/write-str
                  {:initializeUploadRequest
                   {:owner author}})})
@@ -69,7 +72,7 @@
   (Thread/sleep 5000)
   (client/put
     upload-url
-    {:headers (headers)
+    {:headers (headers-memo)
      :body (io/file fs/screenshot-abs-path)}))
 
 (defn image-post [title]
