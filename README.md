@@ -6,4 +6,4 @@ These scripts create papercliff-related content to social media.
 * [Mastodon](https://newsie.social/@papercliff)
 * [Reddit](https://www.reddit.com/r/papercliff/)
 * [Facebook](https://www.facebook.com/profile.php?id=100089193848232)
-* [LinkedIn](https://www.linkedin.com/groups/9301509/)
+* [LinkedIn](https://www.linkedin.com/company/papercliff-api)
