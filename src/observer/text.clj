@@ -10,6 +10,33 @@
             [taoensso.timbre :as timbre])
   (:gen-class))
 
+(defn- tag-candidates [key-words]
+  (let [filtered-capitalized
+        (->> key-words
+             (filter
+               (fn [w]
+                 (every? #(Character/isLetter %) w)))
+             (map s/capitalize))]
+    (concat
+      filtered-capitalized
+      (for [a filtered-capitalized
+            b filtered-capitalized
+            :when (not= a b)]
+        (str a b)))))
+
+(defn- chosen-tags [key-words]
+  (->> key-words
+       tag-candidates
+       (map
+         #(vector
+            %
+            (+ (mastodon-api/hashtag-popularity %)
+               (twitter-api/hashtag-popularity %))))
+       (sort-by second)
+       reverse
+       (take 3)
+       (map first)))
+
 (defn -main []
   (timbre/info "starting text task")
   (when-let [stories
@@ -21,12 +48,21 @@
             link (str "https://news.google.com/search?q="
                       (s/join "+" words)
                       "&hl=en-US&gl=US&ceid=US:en")
-            keywords+link (str key-words "\n" link)]
-        (mastodon-api/text-twoot keywords+link)
-        (twitter-api/text-tweet keywords+link)
-        (facebook-api/text-post keywords+link)
+            hashtags (->> words
+                          chosen-tags
+                          (map #(str "#" %))
+                          (s/join " "))
+            keywords+link+hashtags (str
+                                     key-words
+                                     "\n"
+                                     link
+                                     "\n"
+                                     hashtags)]
+        (mastodon-api/text-twoot keywords+link+hashtags)
+        (twitter-api/text-tweet keywords+link+hashtags)
+        (facebook-api/text-post keywords+link+hashtags)
         (reddit-api/text-post
           key-words
           link)
-        (linkedin-api/text-post keywords+link))))
+        (linkedin-api/text-post keywords+link+hashtags))))
   (timbre/info "text task completed"))

@@ -1,16 +1,50 @@
 (ns observer.apis.twitter
-  (:require [environ.core :as env]
-            [observer.fs :as fs]
-            [taoensso.timbre :as timbre]
-            [twitter.api.restful :as restful]
-            [twitter.oauth :as oauth]
-            [twitter.request :as request]))
+  (:require
+    [clojure.string :as s]
+    [environ.core :as env]
+    [observer.fs :as fs]
+    [taoensso.timbre :as timbre]
+    [twitter.api.restful :as restful]
+    [twitter.api.search :as search]
+    [twitter.oauth :as oauth]
+    [twitter.request :as request]))
 
 (def my-creds
   (oauth/make-oauth-creds (env/env :twitter-api-key)
                           (env/env :twitter-api-key-secret)
                           (env/env :twitter-api-access-token)
                           (env/env :twitter-api-access-token-secret)))
+
+(defn hashtag-popularity [tag]
+  (timbre/info "getting tag stats from twitter")
+  (Thread/sleep 5000)
+  (let [lower-tag (s/lower-case tag)
+
+        res
+        (->> {:q (str "%23" lower-tag "%20-filter%3Aretweets")
+              :result_type "recent"
+              :lang "en"
+              :count 100}
+             (search/search
+               :oauth-creds my-creds
+               :params)
+             :body
+             :statuses
+             (filter
+               #(let [hashtag-set
+                      (->> %
+                           :entities
+                           :hashtags
+                           (map :text)
+                           (map s/lower-case)
+                           set)]
+                  (hashtag-set lower-tag)))
+             (map :user)
+             (map :id)
+             distinct
+             count)]
+    (timbre/info lower-tag "popularity in twitter is" res)
+    res))
 
 (defn text-tweet
   [text]

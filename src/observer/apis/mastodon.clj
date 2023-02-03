@@ -2,6 +2,7 @@
   (:require [clj-http.client :as client]
             [clojure.data.json :as json]
             [clojure.java.io :as io]
+            [clojure.string :as s]
             [environ.core :as env]
             [observer.fs :as fs]
             [taoensso.timbre :as timbre]))
@@ -11,6 +12,26 @@
    (str
      "Bearer "
      (env/env :mastodon-access-token))})
+
+(defn hashtag-popularity [tag]
+   (timbre/info "getting tag stats from mastodon")
+   (Thread/sleep 5000)
+  (let [lower-tag (s/lower-case tag)
+
+        history
+        (-> "https://newsie.social/api/v1/tags/"
+            (str lower-tag)
+            (client/get {:headers headers})
+            :body
+            (json/read-str :key-fn keyword)
+            :history)
+
+        res (->> history
+                 (map :accounts)
+                 (map #(Integer/parseInt %))
+                 (apply +))]
+    (timbre/info lower-tag "popularity in mastodon is" res)
+    res))
 
 (defn text-twoot
   ([text]
