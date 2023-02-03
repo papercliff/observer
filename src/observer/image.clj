@@ -48,4 +48,4 @@
     (facebook-api/image-post full-day-with-hashtags)
     (reddit-api/image-post full-day-str)
     (linkedin-api/image-post full-day-with-hashtags))
-  (timbre/info "text task completed"))
+  (timbre/info "image task completed"))
