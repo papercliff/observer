@@ -18,10 +18,8 @@
 (defn hashtag-popularity [tag]
   (timbre/info "getting tag stats from twitter")
   (Thread/sleep 5000)
-  (let [lower-tag (s/lower-case tag)
-
-        res
-        (->> {:q (str "%23" lower-tag "%20-filter%3Aretweets")
+  (let [res
+        (->> {:q (str "%23" tag "%20-filter%3Aretweets")
               :result_type "recent"
               :lang "en"
               :count 100}
@@ -38,12 +36,12 @@
                            (map :text)
                            (map s/lower-case)
                            set)]
-                  (hashtag-set lower-tag)))
+                  (hashtag-set tag)))
              (map :user)
              (map :id)
              distinct
              count)]
-    (timbre/info lower-tag "popularity in twitter is" res)
+    (timbre/info tag "popularity in twitter is" res)
     res))
 
 (defn text-tweet

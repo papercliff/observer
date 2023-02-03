@@ -11,16 +11,15 @@
   (:gen-class))
 
 (defn- tag-candidates [key-words]
-  (let [filtered-capitalized
-        (->> key-words
-             (filter
-               (fn [w]
-                 (every? #(Character/isLetter %) w)))
-             (map s/capitalize))]
+  (let [filtered-words
+        (filter
+          (fn [w]
+            (every? #(Character/isLetter %) w))
+          key-words)]
     (concat
-      filtered-capitalized
-      (for [a filtered-capitalized
-            b filtered-capitalized
+      filtered-words
+      (for [a filtered-words
+            b filtered-words
             :when (not= a b)]
         (str a b)))))
 
@@ -34,8 +33,9 @@
                (twitter-api/hashtag-popularity %))))
        (sort-by second)
        reverse
-       (take 3)
-       (map first)))
+       (take 2)
+       (map first)
+       (cons "breakingnews")))
 
 (defn -main []
   (timbre/info "starting text task")

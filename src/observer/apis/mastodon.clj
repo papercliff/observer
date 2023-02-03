@@ -16,11 +16,9 @@
 (defn hashtag-popularity [tag]
    (timbre/info "getting tag stats from mastodon")
    (Thread/sleep 5000)
-  (let [lower-tag (s/lower-case tag)
-
-        history
+  (let [history
         (-> "https://newsie.social/api/v1/tags/"
-            (str lower-tag)
+            (str tag)
             (client/get {:headers headers})
             :body
             (json/read-str :key-fn keyword)
@@ -30,7 +28,7 @@
                  (map :accounts)
                  (map #(Integer/parseInt %))
                  (apply +))]
-    (timbre/info lower-tag "popularity in mastodon is" res)
+    (timbre/info tag "popularity in mastodon is" res)
     res))
 
 (defn text-twoot
