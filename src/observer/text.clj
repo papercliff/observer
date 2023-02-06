@@ -39,16 +39,15 @@
 
 (defn -main []
   (timbre/info "starting text task")
-  (when-let [stories
-             (ppf-api/new-important-clusters
+  (when-let [clusters-with-cliques
+             (ppf-api/clusters-with-cliques
                (dt/now))]
-    (timbre/info "stories" stories)
-    (doseq [words stories]
-      (let [key-words (s/join " · " words)
+    (doseq [[cluster clique] clusters-with-cliques]
+      (let [key-words (s/join " · " cluster)
             link (str "https://news.google.com/search?q="
-                      (s/join "+" words)
+                      (s/join "+" clique)
                       "&hl=en-US&gl=US&ceid=US:en")
-            hashtags (->> words
+            hashtags (->> clique
                           chosen-tags
                           (map #(str "#" %))
                           (s/join " "))
@@ -61,8 +60,6 @@
         (mastodon-api/text-twoot keywords+link+hashtags)
         (twitter-api/text-tweet keywords+link+hashtags)
         (facebook-api/text-post keywords+link+hashtags)
-        (reddit-api/text-post
-          key-words
-          link)
+        (reddit-api/text-post key-words link)
         (linkedin-api/text-post keywords+link+hashtags))))
   (timbre/info "text task completed"))
