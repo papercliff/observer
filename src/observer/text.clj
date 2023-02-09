@@ -46,7 +46,7 @@
       (let [key-words (s/join " · " cluster)
             link (str "https://news.google.com/search?q="
                       (s/join "+" clique)
-                      "&hl=en-US&gl=US&ceid=US:en")
+                      "+when:1d&hl=en-US&gl=US&ceid=US:en")
             hashtags (->> clique
                           chosen-tags
                           (map #(str "#" %))
