@@ -50,15 +50,15 @@
                           chosen-tags
                           (map #(str "#" %))
                           (s/join " "))
-            keywords+link+hashtags (str
+            keywords+hashtags+link (str
                                      key-words
                                      "\n"
-                                     link
+                                     hashtags
                                      "\n"
-                                     hashtags)]
-        (mastodon-api/text-twoot keywords+link+hashtags)
-        (twitter-api/text-tweet keywords+link+hashtags)
-        (facebook-api/text-post keywords+link+hashtags)
+                                     link)]
+        (mastodon-api/text-twoot keywords+hashtags+link)
+        (twitter-api/text-tweet keywords+hashtags+link)
+        (facebook-api/text-post keywords+hashtags+link)
         (reddit-api/text-post key-words link)
-        (linkedin-api/text-post keywords+link+hashtags))))
+        (linkedin-api/text-post keywords+hashtags+link))))
   (timbre/info "text task completed"))
