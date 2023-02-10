@@ -44,7 +44,7 @@
                (dt/now))]
     (doseq [[cluster clique] clusters-with-cliques]
       (let [key-words (s/join " · " cluster)
-            link (str "https://papercliff.github.io/redirector/?q="
+            link (str "https://papercliff.github.io/redirect/?q="
                       (s/join "+" cluster))
             hashtags (->> clique
                           chosen-tags
