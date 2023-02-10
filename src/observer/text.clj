@@ -44,9 +44,8 @@
                (dt/now))]
     (doseq [[cluster clique] clusters-with-cliques]
       (let [key-words (s/join " · " cluster)
-            link (str "https://news.google.com/search?q="
-                      (s/join "+" clique)
-                      "+when:1d&hl=en-US&gl=US&ceid=US:en")
+            link (str "https://papercliff.github.io/redirector/?q="
+                      (s/join "+" clique))
             hashtags (->> clique
                           chosen-tags
                           (map #(str "#" %))
