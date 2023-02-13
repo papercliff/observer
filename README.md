@@ -7,3 +7,4 @@ These scripts create papercliff-related content to social media.
 * [Reddit](https://www.reddit.com/r/papercliff/)
 * [Facebook](https://www.facebook.com/profile.php?id=100089193848232)
 * [LinkedIn](https://www.linkedin.com/company/papercliff-api)
+* [Tumblr](https://www.tumblr.com/blog/papercliff-api)

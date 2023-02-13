@@ -1,18 +1,26 @@
 (ns observer.image
-  (:require [etaoin.api :as e]
-            [observer.apis.facebook :as facebook-api]
-            [observer.apis.github :as github-api]
-            [observer.apis.linkedin :as linkedin-api]
-            [observer.apis.mastodon :as mastodon-api]
-            [observer.apis.reddit :as reddit-api]
-            [observer.apis.twitter :as twitter-api]
-            [observer.date-time :as dt]
-            [observer.fs :as fs]
-            [taoensso.timbre :as timbre])
+  (:require
+    [clojure.string :as s]
+    [etaoin.api :as e]
+    [observer.apis.facebook :as facebook-api]
+    [observer.apis.github :as github-api]
+    [observer.apis.linkedin :as linkedin-api]
+    [observer.apis.mastodon :as mastodon-api]
+    [observer.apis.reddit :as reddit-api]
+    [observer.apis.tumblr :as tumblr-api]
+    [observer.apis.twitter :as twitter-api]
+    [observer.date-time :as dt]
+    [observer.fs :as fs]
+    [taoensso.timbre :as timbre])
   (:gen-class))
 
+(def tags
+  ["daily" "news" "keywords"])
+
 (def hashtags-str
-  "#daily #news #keywords")
+  (->> tags
+       (map #(str "#" %))
+       (s/join " ")))
 
 (defn take-screenshot []
   (timbre/info "taking screenshot")
@@ -47,5 +55,6 @@
     (twitter-api/image-tweet full-day-with-hashtags)
     (facebook-api/image-post full-day-with-hashtags)
     (reddit-api/image-post full-day-str)
-    (linkedin-api/image-post full-day-with-hashtags))
+    (linkedin-api/image-post full-day-with-hashtags)
+    (tumblr-api/image-post full-day-str tags))
   (timbre/info "image task completed"))

@@ -6,6 +6,7 @@
   :dependencies [[aysylu/loom "1.0.2"]
                  [clj-http "3.12.3"]
                  [clj-time "0.15.2"]
+                 [com.tumblr/jumblr "0.0.13"]
                  [environ "1.2.0"]
                  [etaoin "1.0.39"]
                  [com.taoensso/timbre "6.0.2"]

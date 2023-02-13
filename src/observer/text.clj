@@ -5,6 +5,7 @@
             [observer.apis.mastodon :as mastodon-api]
             [observer.apis.papercliff :as ppf-api]
             [observer.apis.reddit :as reddit-api]
+            [observer.apis.tumblr :as tumblr-api]
             [observer.apis.twitter :as twitter-api]
             [observer.date-time :as dt]
             [taoensso.timbre :as timbre])
@@ -46,8 +47,8 @@
       (let [key-words (s/join " · " cluster)
             link (str "https://papercliff.github.io/redirector/?q="
                       (s/join "+" cluster))
-            hashtags (->> clique
-                          chosen-tags
+            chosen-hashtags (chosen-tags clique)
+            hashtags (->> chosen-hashtags
                           (map #(str "#" %))
                           (s/join " "))
             keywords+link+hashtags (str
@@ -60,5 +61,6 @@
         (twitter-api/text-tweet keywords+link+hashtags)
         (facebook-api/text-post keywords+link+hashtags)
         (reddit-api/text-post key-words link)
-        (linkedin-api/text-post keywords+link+hashtags))))
+        (linkedin-api/text-post keywords+link+hashtags)
+        (tumblr-api/text-post key-words link chosen-hashtags))))
   (timbre/info "text task completed"))
