@@ -57,10 +57,28 @@
                                      link
                                      "\n"
                                      hashtags)]
-        (mastodon-api/text-twoot keywords+link+hashtags)
-        (twitter-api/text-tweet keywords+link+hashtags)
-        (facebook-api/text-post keywords+link+hashtags)
-        (reddit-api/text-post key-words link)
-        (linkedin-api/text-post keywords+link+hashtags)
-        (tumblr-api/text-post key-words link chosen-hashtags))))
+        (try
+          (mastodon-api/text-twoot keywords+link+hashtags)
+          (catch Exception e
+            (timbre/error "caught exception" (.getMessage e))))
+        (try
+          (twitter-api/text-tweet keywords+link+hashtags)
+          (catch Exception e
+            (timbre/error "caught exception" (.getMessage e))))
+        (try
+          (facebook-api/text-post keywords+link+hashtags)
+          (catch Exception e
+            (timbre/error "caught exception" (.getMessage e))))
+        (try
+          (reddit-api/text-post key-words link)
+          (catch Exception e
+            (timbre/error "caught exception" (.getMessage e))))
+        (try
+          (linkedin-api/text-post keywords+link+hashtags)
+          (catch Exception e
+            (timbre/error "caught exception" (.getMessage e))))
+        (try
+          (tumblr-api/text-post key-words link chosen-hashtags)
+          (catch Exception e
+            (timbre/error "caught exception" (.getMessage e)))))))
   (timbre/info "text task completed"))

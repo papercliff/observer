@@ -51,10 +51,28 @@
          (format "const singleDayActions = %s;")
          (fs/save-content "single-day-actions.js"))
     (take-screenshot)
-    (mastodon-api/image-twoot full-day-with-hashtags)
-    (twitter-api/image-tweet full-day-with-hashtags)
-    (facebook-api/image-post full-day-with-hashtags)
-    (reddit-api/image-post full-day-str)
-    (linkedin-api/image-post full-day-with-hashtags)
-    (tumblr-api/image-post full-day-str tags))
+    (try
+      (mastodon-api/image-twoot full-day-with-hashtags)
+      (catch Exception e
+            (timbre/error "caught exception" (.getMessage e))))
+    (try
+      (twitter-api/image-tweet full-day-with-hashtags)
+      (catch Exception e
+            (timbre/error "caught exception" (.getMessage e))))
+    (try
+      (facebook-api/image-post full-day-with-hashtags)
+      (catch Exception e
+            (timbre/error "caught exception" (.getMessage e))))
+    (try
+      (reddit-api/image-post full-day-str)
+      (catch Exception e
+            (timbre/error "caught exception" (.getMessage e))))
+    (try
+      (linkedin-api/image-post full-day-with-hashtags)
+      (catch Exception e
+            (timbre/error "caught exception" (.getMessage e))))
+    (try
+      (tumblr-api/image-post full-day-str tags)
+      (catch Exception e
+            (timbre/error "caught exception" (.getMessage e)))))
   (timbre/info "image task completed"))
