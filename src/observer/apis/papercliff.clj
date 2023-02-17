@@ -75,8 +75,6 @@
         res
         (->> connected-components
              (filter #(> (count %) 3))
-             (map sort)
-             (sort-by #(vector (/ 1 (count %)) (s/join " " %)))
              (map set))]
     (timbre/info "selecting components from" connected-components)
     (timbre/info "reaching components" res)
