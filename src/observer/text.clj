@@ -35,8 +35,7 @@
        (sort-by second)
        reverse
        (take 2)
-       (map first)
-       (cons "breakingnews")))
+       (map first)))
 
 (defn -main []
   (timbre/info "starting text task")
@@ -49,6 +48,7 @@
                       (s/join "+" cluster))
             chosen-hashtags (chosen-tags clique)
             hashtags (->> chosen-hashtags
+                          (cons "breakingnews")
                           (map #(str "#" %))
                           (s/join " "))
             keywords+link+hashtags (str
@@ -62,5 +62,8 @@
         (facebook-api/text-post keywords+link+hashtags)
         (reddit-api/text-post key-words link)
         (linkedin-api/text-post keywords+link+hashtags)
-        (tumblr-api/text-post key-words link chosen-hashtags))))
+        (tumblr-api/text-post
+          key-words
+          link
+          (cons "breaking news" chosen-hashtags)))))
   (timbre/info "text task completed"))
