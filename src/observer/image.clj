@@ -57,4 +57,5 @@
     (reddit-api/image-post full-day-str)
     (linkedin-api/image-post full-day-with-hashtags)
     (tumblr-api/image-post full-day-str tags))
-  (timbre/info "image task completed"))
+  (timbre/info "image task completed")
+  (System/exit 0))

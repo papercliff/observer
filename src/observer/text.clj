@@ -66,4 +66,5 @@
           key-words
           link
           (cons "breaking news" chosen-hashtags)))))
-  (timbre/info "text task completed"))
+  (timbre/info "text task completed")
+  (System/exit 0))
