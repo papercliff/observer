@@ -43,9 +43,10 @@
              (ppf-api/clusters-with-cliques
                (dt/now))]
     (doseq [[cluster clique] clusters-with-cliques]
-      (let [key-words (s/join " · " cluster)
+      (let [sorted-cluster (sort cluster)
+            key-words (s/join " · " sorted-cluster)
             link (str "https://papercliff.github.io/redirect/?q="
-                      (s/join "+" cluster))
+                      (s/join "+" sorted-cluster))
             chosen-hashtags (chosen-tags clique)
             hashtags (->> chosen-hashtags
                           (cons "breakingnews")
