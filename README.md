@@ -1,6 +1,6 @@
 # observer
 
-These scripts create papercliff-related content to social media.
+This repository contains scripts that use the papercliff API and create content for its social media accounts:
 
 * [Twitter](https://twitter.com/papercliff_api)
 * [Mastodon](https://newsie.social/@papercliff)
