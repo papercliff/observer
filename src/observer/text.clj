@@ -39,33 +39,29 @@
 
 (defn -main []
   (timbre/info "starting text task")
-  (when-let [clusters-with-cliques
-             (ppf-api/clusters-with-cliques
-               (dt/now))]
-    (doseq [[cluster clique] clusters-with-cliques]
-      (let [sorted-cluster (sort cluster)
-            key-words (s/join " · " sorted-cluster)
-            link (str "https://papercliff.github.io/redirect/?q="
-                      (s/join "+" sorted-cluster))
-            chosen-hashtags (chosen-tags clique)
-            hashtags (->> chosen-hashtags
-                          (cons "breakingnews")
-                          (map #(str "#" %))
-                          (s/join " "))
-            keywords+link+hashtags (str
-                                     key-words
-                                     "\n"
-                                     link
-                                     "\n"
-                                     hashtags)]
-        (mastodon-api/text-twoot keywords+link+hashtags)
-        (twitter-api/text-tweet keywords+link+hashtags)
-        (facebook-api/text-post keywords+link+hashtags)
-        (reddit-api/text-post key-words link)
-        (linkedin-api/text-post keywords+link+hashtags)
-        (tumblr-api/text-post
-          key-words
-          link
-          (cons "breaking news" chosen-hashtags)))))
+  (doseq [clique (ppf-api/selected-cliques (dt/now))]
+    (let [key-words (s/join " · " clique)
+          link (str "https://papercliff.github.io/redirect/?q="
+                    (s/join "+" clique))
+          chosen-hashtags (chosen-tags clique)
+          hashtags (->> chosen-hashtags
+                        (cons "breakingnews")
+                        (map #(str "#" %))
+                        (s/join " "))
+          keywords+link+hashtags (str
+                                   key-words
+                                   "\n"
+                                   link
+                                   "\n"
+                                   hashtags)]
+      (mastodon-api/text-twoot keywords+link+hashtags)
+      (twitter-api/text-tweet keywords+link+hashtags)
+      (facebook-api/text-post keywords+link+hashtags)
+      (reddit-api/text-post key-words link)
+      (linkedin-api/text-post keywords+link+hashtags)
+      (tumblr-api/text-post
+        key-words
+        link
+        (cons "breaking news" chosen-hashtags))))
   (timbre/info "text task completed")
   (System/exit 0))

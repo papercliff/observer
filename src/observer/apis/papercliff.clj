@@ -68,36 +68,27 @@
        (mapcat story->term-pairs)
        (apply loom/graph)))
 
-(defn- components [graph]
-  (let [connected-components
-        (loom-alg/connected-components graph)
-
-        res
-        (->> connected-components
-             (filter #(> (count %) 3))
-             (map set))]
-    (timbre/info "selecting components from" connected-components)
-    (timbre/info "reaching components" res)
-    res))
-
-(defn- cliques [graph]
-  (let [res (->> graph
-                 loom-alg/maximal-cliques
-                 (sort-by count)
-                 reverse)]
-    (timbre/info "forming cliques" res)
-    res))
-
-(defn clusters-with-cliques [now]
+(defn selected-cliques [now]
   (let [graph (loom-graph now)
-        selected-components (components graph)
-        sorted-cliques (cliques graph)
-        res (map
-              (fn [component]
-                [component
-                 (->> sorted-cliques
-                      (filter #(st/subset? % component))
-                      first)])
-              selected-components)]
-    (timbre/info "reaching cluster-clique pairs" res)
+        components (->> graph
+                        loom-alg/connected-components
+                        (map set))
+        _ (timbre/info "reaching components" components)
+        cliques (->> graph
+                     loom-alg/maximal-cliques
+                     (filter #(> (count %) 3))
+                     (sort-by count)
+                     reverse
+                     (map set))
+        _ (timbre/info "forming cliques" cliques)
+        res (->> components
+                 (mapcat
+                   (fn [comp-set]
+                     (if-let [cl (->> cliques
+                                      (filter #(st/subset? % comp-set))
+                                      first)]
+                       [cl]
+                       [])))
+                 (map sort))]
+    (timbre/info "selecting cliques" res)
     (seq res)))
