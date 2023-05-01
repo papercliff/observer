@@ -1,7 +1,9 @@
 (ns observer.apis.github
-  (:require [clj-github.httpkit-client :as github-client]
+  (:require [clj-github.changeset :as github-change]
+            [clj-github.httpkit-client :as github-client]
             [clj-github.repository :as github-repo]
             [clj-http.client :as client]
+            [clojure.data.json :as json]
             [environ.core :as env]
             [me.raynes.fs :as raynes]
             [observer.date-time :as dt]
@@ -24,3 +26,20 @@
       github-client/new-client
       (github-repo/clone "papercliff" "animated-graph")
       (raynes/copy-dir fs/res-dir-path)))
+
+(defn save-content
+  [org repo branch path content]
+  (timbre/infof "saving github contents to %s/%s/%s/%s" org repo branch path)
+  (let [client (github-client/new-client
+                 {:token (env/env :github-token)})]
+    (-> (github-change/from-branch!
+          client
+          org repo branch)
+        (github-change/put-content
+          path
+          (json/write-str
+            content
+            :indent true))
+        (github-change/commit!
+          (str "APapercliff observer submitted " path))
+        (github-change/update-branch!))))

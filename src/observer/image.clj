@@ -54,7 +54,14 @@
     (mastodon-api/image-twoot full-day-with-hashtags)
     (twitter-api/image-tweet full-day-with-hashtags)
     (facebook-api/image-post full-day-with-hashtags)
-    (reddit-api/image-post full-day-str)
+    (let [image-url (reddit-api/image-post full-day-str)]
+      (github-api/save-content
+        "mrdimosthenis"
+        "BlindfoldChessTraining"
+        "master"
+        "sponsor.json"
+        {:SponsorName "papercliff"
+         :SponsorImage image-url}))
     (linkedin-api/image-post full-day-with-hashtags)
     (tumblr-api/image-post full-day-str tags))
   (timbre/info "image task completed")

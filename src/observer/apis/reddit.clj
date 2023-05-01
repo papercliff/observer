@@ -36,7 +36,9 @@
                      :sr "r/papercliff"}})))
 
 (defn image-post [title]
-  (let [headers (post-headers)]
+  (let [headers (post-headers)
+        image-url (imgur-api/upload-image
+                    (str "News keywords for " title))]
     (timbre/info "posting image to reddit")
     (Thread/sleep 5000)
     (client/post
@@ -44,6 +46,6 @@
       {:headers headers
        :form-params {:title title
                      :kind "link"
-                     :url (imgur-api/upload-image
-                            (str "News keywords for " title))
-                     :sr "r/papercliff"}})))
+                     :url image-url
+                     :sr "r/papercliff"}})
+    image-url))
