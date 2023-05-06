@@ -66,3 +66,5 @@
     (tumblr-api/image-post full-day-str tags))
   (timbre/info "image task completed")
   (System/exit 0))
+
+;; Comment to trigger rebuild
