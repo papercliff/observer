@@ -28,7 +28,7 @@
       (raynes/copy-dir fs/res-dir-path)))
 
 (defn save-content
-  [org repo branch path content]
+  [org repo branch path content commit-msg]
   (timbre/infof "saving github contents to %s/%s/%s/%s" org repo branch path)
   (-> {:token (env/env :github-token)}
       github-client/new-client
@@ -38,6 +38,5 @@
         (json/write-str
           content
           :indent true))
-      (github-change/commit!
-        (str "APapercliff observer submitted " path))
+      (github-change/commit! commit-msg)
       (github-change/update-branch!)))

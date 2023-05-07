@@ -61,7 +61,8 @@
         "master"
         "sponsor.json"
         {:SponsorName "papercliff"
-         :SponsorImage image-url}))
+         :SponsorImage image-url}
+        "Auto-commit by Papercliff observer"))
     (linkedin-api/image-post full-day-with-hashtags)
     (tumblr-api/image-post full-day-str tags))
   (timbre/info "image task completed")
