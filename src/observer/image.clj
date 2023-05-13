@@ -58,7 +58,7 @@
       (github-api/save-content
         "mrdimosthenis"
         "BlindfoldChessTraining"
-        "master"
+        "sponsor"
         "sponsor.json"
         {:SponsorName "papercliff"
          :SponsorImage image-url}
