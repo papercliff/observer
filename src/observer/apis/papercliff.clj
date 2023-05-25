@@ -35,7 +35,7 @@
     {:from (dt/->date-hour-str
              (dt/minutes-ago
                now
-               (* 2.5 60)))}))
+               (* 3.5 60)))}))
 
 (defn- combinations-until [now terms]
   (combinations-memo
