@@ -6,25 +6,26 @@
             [environ.core :as env]
             [loom.graph :as loom]
             [loom.alg :as loom-alg]
+            [observer.attempt :as attempt]
             [observer.date-time :as dt]
             [taoensso.timbre :as timbre]))
 
 (defn- combinations [query-params]
   (timbre/info "getting combinations" query-params)
-  (Thread/sleep 5000)
-  (let [res (-> "https://papercliff.p.rapidapi.com/combinations"
-                (client/get
-                  {:content-type :json
-                   :headers {"X-RapidAPI-Key"
-                             (env/env :x-rapidapi-key)
+  (attempt/retry
+    #(let [res (-> "https://papercliff.p.rapidapi.com/combinations"
+                   (client/get
+                     {:content-type :json
+                      :headers {"X-RapidAPI-Key"
+                                (env/env :x-rapidapi-key)
 
-                             "X-RapidAPI-Host"
-                             "papercliff.p.rapidapi.com"}
-                   :query-params query-params})
-                :body
-                (json/read-str :key-fn keyword))]
-    (timbre/info "combinations" res)
-    res))
+                                "X-RapidAPI-Host"
+                                "papercliff.p.rapidapi.com"}
+                      :query-params query-params})
+                   :body
+                   (json/read-str :key-fn keyword))]
+       (timbre/info "combinations" res)
+       res)))
 
 (def combinations-memo
   (memoize combinations))
@@ -61,7 +62,9 @@
          (fn [story]
            (->> story
                 story->term-pairs
-                (mapcat #(combinations-until now %))
+                (mapcat
+                  (fn [terms]
+                    (combinations-until now terms)))
                 (every?
                   (fn [{:keys [agencies]}]
                     (< agencies 3))))))
@@ -76,7 +79,9 @@
         _ (timbre/info "reaching components" components)
         cliques (->> graph
                      loom-alg/maximal-cliques
-                     (filter #(> (count %) 3))
+                     (filter
+                       (fn [clq]
+                         (> (count clq) 3)))
                      (sort-by count)
                      reverse
                      (map set))
@@ -85,7 +90,9 @@
                  (mapcat
                    (fn [comp-set]
                      (if-let [cl (->> cliques
-                                      (filter #(st/subset? % comp-set))
+                                      (filter
+                                        (fn [clq]
+                                          (st/subset? clq comp-set)))
                                       first)]
                        [cl]
                        [])))

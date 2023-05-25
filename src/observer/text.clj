@@ -7,6 +7,7 @@
             [observer.apis.reddit :as reddit-api]
             [observer.apis.tumblr :as tumblr-api]
             [observer.apis.twitter :as twitter-api]
+            [observer.attempt :as attempt]
             [observer.date-time :as dt]
             [taoensso.timbre :as timbre])
   (:gen-class))
@@ -15,7 +16,10 @@
   (let [filtered-words
         (filter
           (fn [w]
-            (every? #(Character/isLetter %) w))
+            (every?
+              (fn [chr]
+                (Character/isLetter ^Character chr))
+              w))
           key-words)]
     (concat
       filtered-words
@@ -54,14 +58,15 @@
                                    link
                                    "\n"
                                    hashtags)]
-      (mastodon-api/text-twoot keywords+link+hashtags)
-      (twitter-api/text-tweet keywords+link+hashtags)
-      (facebook-api/text-post keywords+link+hashtags)
-      (reddit-api/text-post key-words link)
-      (linkedin-api/text-post keywords+link+hashtags)
-      (tumblr-api/text-post
-        key-words
-        link
-        (cons "breaking news" chosen-hashtags))))
+      (doseq [f [#(mastodon-api/text-twoot keywords+link+hashtags)
+                 #(twitter-api/text-tweet keywords+link+hashtags)
+                 #(facebook-api/text-post keywords+link+hashtags)
+                 #(reddit-api/text-post key-words link)
+                 #(linkedin-api/text-post keywords+link+hashtags)
+                 #(tumblr-api/text-post
+                    key-words
+                    link
+                    (cons "breaking news" chosen-hashtags))]]
+        (attempt/catch-all f))))
   (timbre/info "text task completed")
   (System/exit 0))
