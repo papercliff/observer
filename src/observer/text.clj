@@ -49,7 +49,7 @@
       (let [key-words (s/join " · " clique)
             link (str "https://papercliff.github.io/redirect/?q="
                       (s/join "+" clique)
-                      "&tbs=cdr:1,cd_min:"
+                      "&tbm=nws&tbs=cdr:1,cd_min:"
                       (-> now dt/at-start-of-prev-day dt/->us-day-str)
                       ",cd_max:"
                       (-> now dt/at-start-of-next-day dt/->us-day-str))
