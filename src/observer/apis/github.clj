@@ -18,9 +18,10 @@
   {:token (env/env :github-token)})
 
 (defn load-single-day-actions [now]
-  (let [url (format
-              single-day-actions-fmt
-              (dt/->start-of-prev-day-str now))]
+  (let [url (->> now
+                 dt/at-start-of-prev-day
+                 dt/->day-str
+                 (format single-day-actions-fmt))]
     (timbre/info "loading" url)
     (attempt/retry
       #(-> url client/get :body))))

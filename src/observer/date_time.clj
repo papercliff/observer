@@ -2,32 +2,39 @@
   (:require [clj-time.core :as time]
             [clj-time.format :as time-f]))
 
-(defn ->date-hour-str [dt]
+(defn- unparse [dt fmt]
   (time-f/unparse
-    (time-f/formatter
-      :date-hour-minute)
+    (time-f/formatter fmt)
     dt))
 
-(defn minutes-ago [dt minutes]
+(defn ->date-hour-str [dt]
+  (unparse dt :date-hour-minute))
+
+(defn ->day-str [dt]
+  (unparse dt :date))
+
+(defn ->full-day-str [dt]
+  (unparse dt "EEEEE, MMMMM d, yyyy"))
+
+(defn ->us-day-str [dt]
+  (unparse dt "M/d/yyyy"))
+
+(defn hours-ago [dt hours]
   (time/minus
     dt
-    (time/minutes minutes)))
+    (time/hours hours)))
 
-(defn- at-start-of-prev-day [dt]
+(defn at-start-of-prev-day [dt]
   (->> 1
        time/days
        (time/minus dt)
        time/with-time-at-start-of-day))
 
-(defn ->start-of-prev-day-str [dt]
-  (time-f/unparse
-    (time-f/formatter :date)
-    (at-start-of-prev-day dt)))
-
-(defn ->prev-day-full-str [dt]
-  (time-f/unparse
-    (time-f/formatter "EEEEE, MMMMM d, yyyy")
-    (at-start-of-prev-day dt)))
+(defn at-start-of-next-day [dt]
+  (->> 1
+       time/days
+       (time/plus dt)
+       time/with-time-at-start-of-day))
 
 (defn now []
   (time/now))

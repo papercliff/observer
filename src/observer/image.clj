@@ -43,7 +43,9 @@
   (fs/delete-res-dir)
   (github-api/clone-animated-graph)
   (let [now (dt/now)
-        full-day-str (dt/->prev-day-full-str now)
+        full-day-str (-> now
+                         dt/at-start-of-prev-day
+                         dt/->full-day-str)
         full-day-with-hashtags (str full-day-str
                                     "\n"
                                     hashtags-str)]

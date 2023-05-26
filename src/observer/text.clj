@@ -44,26 +44,31 @@
 
 (defn -main []
   (timbre/info "starting text task")
-  (doseq [clique (ppf-api/selected-cliques (dt/now))]
-    (let [key-words (s/join " · " clique)
-          link (str "https://papercliff.github.io/redirect/?q="
-                    (s/join "+" clique))
-          chosen-hashtags (chosen-tags clique)
-          hashtags (->> chosen-hashtags
-                        (map #(str "#" %))
-                        (s/join " "))
-          keywords+link+hashtags (str
-                                   key-words
-                                   "\n"
-                                   link
-                                   "\n"
-                                   hashtags)]
-      (doseq [f [#(mastodon-api/text-twoot keywords+link+hashtags)
-                 #(twitter-api/text-tweet keywords+link+hashtags)
-                 #(facebook-api/text-post keywords+link+hashtags)
-                 #(reddit-api/text-post key-words link)
-                 #(linkedin-api/text-post keywords+link+hashtags)
-                 #(tumblr-api/text-post key-words link chosen-hashtags)]]
-        (attempt/catch-all f))))
+  (let [now (dt/now)]
+    (doseq [clique (ppf-api/selected-cliques now)]
+      (let [key-words (s/join " · " clique)
+            link (str "https://papercliff.github.io/redirect/?q="
+                      (s/join "+" clique)
+                      "&tbs=cdr:1,cd_min:"
+                      (-> now dt/at-start-of-prev-day dt/->us-day-str)
+                      ",cd_max:"
+                      (-> now dt/at-start-of-next-day dt/->us-day-str))
+            chosen-hashtags (chosen-tags clique)
+            hashtags (->> chosen-hashtags
+                          (map #(str "#" %))
+                          (s/join " "))
+            keywords+link+hashtags (str
+                                     key-words
+                                     "\n"
+                                     link
+                                     "\n"
+                                     hashtags)]
+        (doseq [f [#(mastodon-api/text-twoot keywords+link+hashtags)
+                   #(twitter-api/text-tweet keywords+link+hashtags)
+                   #(facebook-api/text-post keywords+link+hashtags)
+                   #(reddit-api/text-post key-words link)
+                   #(linkedin-api/text-post keywords+link+hashtags)
+                   #(tumblr-api/text-post key-words link chosen-hashtags)]]
+          (attempt/catch-all f)))))
   (timbre/info "text task completed")
   (System/exit 0))
