@@ -12,9 +12,11 @@
 
 (defn sleep-and-execute [f]
   (timbre/infof
-    "sleeping for %s milliseconds"
+    "sleeping for about %s milliseconds"
     sleep-time)
-  (Thread/sleep sleep-time)
+  (Thread/sleep
+    (+ sleep-time
+       (rand 3000)))
   (f))
 
 (defn- retry-go [f i]
