@@ -30,38 +30,37 @@
 (def combinations-memo
   (memoize combinations))
 
-(defn- from-query-param [now]
-  (dt/->date-hour-str
-    (dt/minutes-ago
-      now
-      (* 26.5 60))))
-
-(defn- to-query-param [now]
-  (dt/->date-hour-str
-    (dt/minutes-ago
-      now
-      (* 2.5 60))))
-
 (defn- combinations-since [now]
-  (->> 100
-       (iterate
-         (partial + 100))
-       (map
-         (fn [offset]
-           {:from (from-query-param now)
-            :to (to-query-param now)
-            :offset offset}))
-       (cons
-         {:from (from-query-param now)
-          :to (to-query-param now)})
-       (mapcat combinations)
-       (take-while
-         (fn [{:keys [agencies]}]
-           (> agencies 2)))))
+  (let [from (dt/->date-hour-str
+               (dt/minutes-ago
+                 now
+                 (* 26.5 60)))
+        to (dt/->date-hour-str
+             (dt/minutes-ago
+               now
+               (* 2.5 60)))]
+    (->> 100
+         (iterate
+           (partial + 100))
+         (map
+           (fn [offset]
+             {:from from
+              :to to
+              :offset offset}))
+         (cons
+           {:from from
+            :to to})
+         (mapcat combinations)
+         (take-while
+           (fn [{:keys [agencies]}]
+             (> agencies 2))))))
 
 (defn- combinations-until [now terms]
   (combinations-memo
-    {:to (to-query-param now)
+    {:to (dt/->date-hour-str
+           (dt/minutes-ago
+             now
+             (* 3.5 60)))
      :terms (s/join "-" terms)}))
 
 (defn- story->term-pairs [story]
