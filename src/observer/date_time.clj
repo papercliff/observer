@@ -19,10 +19,10 @@
 (defn ->us-day-str [dt]
   (unparse dt "M/d/yyyy"))
 
-(defn hours-ago [dt hours]
+(defn minutes-ago [dt hours]
   (time/minus
     dt
-    (time/hours hours)))
+    (time/minutes hours)))
 
 (defn at-start-of-prev-day [dt]
   (->> 1

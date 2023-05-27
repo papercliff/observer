@@ -33,12 +33,12 @@
 (defn- combinations-since [now]
   (combinations-memo
     {:from (dt/->date-hour-str
-             (dt/hours-ago now 4))}))
+             (dt/minutes-ago now (* 4 60)))}))
 
 (defn- combinations-until [now terms]
   (combinations-memo
     {:to (dt/->date-hour-str
-           (dt/hours-ago now 1))
+           (dt/minutes-ago now 60))
      :terms (s/join "-" terms)}))
 
 (defn- story->term-pairs [story]
