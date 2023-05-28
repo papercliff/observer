@@ -42,9 +42,12 @@
        (map first)
        (cons "news")))
 
-(defn -main []
-  (timbre/info "starting text task")
-  (let [now (dt/now)]
+(defn- go []
+  (let [now (dt/now)
+        date-hour-str (dt/->date-hour-str now)]
+    (timbre/info
+      "starting text task for"
+      date-hour-str)
     (doseq [clique (ppf-api/selected-cliques now)]
       (let [key-words (s/join " · " clique)
             link (str "https://papercliff.github.io/redirect/?q="
@@ -69,6 +72,15 @@
                    #(reddit-api/text-post key-words link)
                    #(linkedin-api/text-post keywords+link+hashtags)
                    #(tumblr-api/text-post key-words link chosen-hashtags)]]
-          (attempt/catch-all f)))))
-  (timbre/info "text task completed")
-  (System/exit 0))
+          (attempt/catch-all f))))
+    (timbre/info
+      "text task completed for"
+      date-hour-str)))
+
+(defn -main []
+  (while true
+    (future
+      (attempt/catch-all go))
+    (Thread/sleep
+      ;; an hour
+      (* 60 60 1000))))
