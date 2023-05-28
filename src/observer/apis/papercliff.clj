@@ -96,7 +96,7 @@
                      loom-alg/maximal-cliques
                      (filter
                        (fn [clq]
-                         (> (count clq) 2)))
+                         (> (count clq) 3)))
                      (sort-by count)
                      reverse
                      (map set))
