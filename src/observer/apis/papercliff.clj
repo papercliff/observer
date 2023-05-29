@@ -34,11 +34,11 @@
   (let [from (dt/->date-hour-str
                (dt/minutes-ago
                  now
-                 (* 26.5 60)))
+                 (* 24.25 60)))
         to (dt/->date-hour-str
              (dt/minutes-ago
                now
-               (* 2.5 60)))]
+               (* 0.25 60)))]
     (->> 100
          (iterate
            (partial + 100))
@@ -60,7 +60,7 @@
     {:to (dt/->date-hour-str
            (dt/minutes-ago
              now
-             (* 3.5 60)))
+             (* 1.25 60)))
      :terms (s/join "-" terms)}))
 
 (defn- story->term-pairs [story]
