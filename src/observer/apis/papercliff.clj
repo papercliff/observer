@@ -24,9 +24,6 @@
        (timbre/info "combinations" res)
        res)))
 
-(def combinations-memo
-  (memoize combinations))
-
 (defn- combinations-since [now]
   (let [from (dt/->date-hour-str
                (dt/minutes-ago
@@ -52,7 +49,8 @@
            (fn [{:keys [agencies]}]
              (> agencies 2))))))
 
-(defn- combinations-until [now terms]
+(defn- combinations-until
+  [combinations-memo now terms]
   (combinations-memo
     {:to (dt/->date-hour-str
            (dt/minutes-ago
@@ -67,21 +65,26 @@
      [b c]]))
 
 (defn- loom-graph [now]
-  (->> now
-       combinations-since
-       (map :story)
-       (filter
-         (fn [story]
-           (->> story
-                story->term-pairs
-                (mapcat
-                  (fn [terms]
-                    (combinations-until now terms)))
-                (every?
-                  (fn [{:keys [agencies]}]
-                    (< agencies 3))))))
-       (mapcat story->term-pairs)
-       (apply loom/graph)))
+  (let [combinations-memo
+        (memoize combinations)]
+    (->> now
+         combinations-since
+         (map :story)
+         (filter
+           (fn [story]
+             (->> story
+                  story->term-pairs
+                  (mapcat
+                    (fn [terms]
+                      (combinations-until
+                        combinations-memo
+                        now
+                        terms)))
+                  (every?
+                    (fn [{:keys [agencies]}]
+                      (< agencies 3))))))
+         (mapcat story->term-pairs)
+         (apply loom/graph))))
 
 (defn selected-cliques [now]
   (let [graph (loom-graph now)
