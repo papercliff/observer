@@ -13,14 +13,11 @@
 (defn- combinations [query-params]
   (timbre/info "getting combinations" query-params)
   (attempt/retry
-    #(let [res (-> "https://papercliff.p.rapidapi.com/combinations"
+    #(let [res (-> (env/env :papercliff-combinations-url)
                    (client/get
                      {:content-type :json
-                      :headers {"X-RapidAPI-Key"
-                                (env/env :x-rapidapi-key)
-
-                                "X-RapidAPI-Host"
-                                "papercliff.p.rapidapi.com"}
+                      :headers {(env/env :papercliff-secret-key)
+                                (env/env :papercliff-secret-value)}
                       :query-params query-params})
                    :body
                    (json/read-str :key-fn keyword))]
