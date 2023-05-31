@@ -3,13 +3,20 @@
             [clj-github.httpkit-client :as github-client]
             [clj-github.repository :as github-repo]
             [clj-http.client :as client]
-            [clojure.data.json :as json]
             [environ.core :as env]
             [me.raynes.fs :as raynes]
             [observer.attempt :as attempt]
             [observer.date-time :as dt]
             [observer.fs :as fs]
             [taoensso.timbre :as timbre]))
+
+(def put-content
+  "[changeset path content]
+
+  Returns a new changeset with the file under path with new content.
+  `content` can be a string or a byte-array.
+  It creates a new file if it does not exist yet."
+  github-change/put-content)
 
 (def single-day-actions-fmt
   "https://raw.githubusercontent.com/papercliff/historical-data/master/transformed/%s-single-day-actions.json")
@@ -34,17 +41,30 @@
          (github-repo/clone "papercliff" "animated-graph")
          (raynes/copy-dir fs/res-dir-path))))
 
-(defn save-content
-  [org repo branch path content commit-msg]
-  (timbre/infof "saving github contents to %s/%s/%s/%s" org repo branch path)
+(defn with-changeset [org repo branch f]
   (attempt/retry
-    #(-> gh-token-map
-         github-client/new-client
-         (github-change/from-branch! org repo branch)
-         (github-change/put-content
-           path
-           (json/write-str
-             content
-             :indent true))
-         (github-change/commit! commit-msg)
-         (github-change/update-branch!))))
+    #(let [changeset
+           (-> gh-token-map
+               github-client/new-client
+               (github-change/from-branch!
+                 org
+                 repo
+                 branch))]
+       (timbre/infof
+         "committing github changes to %s/%s/%s"
+         org repo branch)
+       (-> changeset
+           (f changeset)
+           (github-change/commit!
+             "Auto-commit from papercliff observer")
+           (github-change/update-branch!)))))
+
+(defn put-content-once
+  [org repo branch path content]
+  (with-changeset
+    org repo branch
+    (fn [changeset]
+      (put-content
+        changeset
+        path
+        content))))

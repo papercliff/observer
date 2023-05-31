@@ -1,5 +1,6 @@
 (ns observer.image
   (:require
+    [clojure.data.json :as json]
     [clojure.string :as s]
     [etaoin.api :as e]
     [observer.apis.facebook :as facebook-api]
@@ -58,14 +59,15 @@
                #(twitter-api/image-tweet full-day-with-hashtags)
                #(facebook-api/image-post full-day-with-hashtags)
                #(let [image-url (reddit-api/image-post full-day-str)]
-                  (github-api/save-content
+                  (github-api/put-content-once
                     "mrdimosthenis"
                     "BlindfoldChessTraining"
                     "sponsor"
                     "sponsor.json"
-                    {:SponsorName "papercliff"
-                     :SponsorImage image-url}
-                    "Auto-commit by Papercliff observer"))
+                    (json/write-str
+                      {:SponsorName "papercliff"
+                       :SponsorImage image-url}
+                      :indent true)))
                #(linkedin-api/image-post full-day-with-hashtags)
                #(tumblr-api/image-post full-day-str tags)]]
       (attempt/catch-all f)))
