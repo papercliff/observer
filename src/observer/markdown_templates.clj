@@ -21,6 +21,6 @@ content_url: %s
 (defn text-post-path
   [now tags]
   (format
-    "all_collections/_posts/%s-%s.md")
-  (dt/->day-str now)
-  (s/join "-" tags))
+    "all_collections/_posts/%s-%s.md"
+    (dt/->day-str now)
+    (s/join "-" tags)))

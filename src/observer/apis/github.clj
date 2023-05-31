@@ -54,7 +54,7 @@
          "committing github changes to %s/%s/%s"
          org repo branch)
        (-> changeset
-           (f changeset)
+           f
            (github-change/commit!
              "Auto-commit from papercliff observer")
            (github-change/update-branch!)))))
