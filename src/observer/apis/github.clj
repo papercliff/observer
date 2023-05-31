@@ -43,21 +43,20 @@
 
 (defn with-changeset [org repo branch f]
   (attempt/retry
-    #(let [changeset
-           (-> gh-token-map
-               github-client/new-client
-               (github-change/from-branch!
-                 org
-                 repo
-                 branch))]
-       (timbre/infof
-         "committing github changes to %s/%s/%s"
-         org repo branch)
-       (-> changeset
-           f
-           (github-change/commit!
-             "Auto-commit from papercliff observer")
-           (github-change/update-branch!)))))
+    (fn []
+      (timbre/infof
+        "committing github changes to %s/%s/%s"
+        org repo branch)
+      (-> gh-token-map
+          github-client/new-client
+          (github-change/from-branch!
+            org
+            repo
+            branch)
+          f
+          (github-change/commit!
+            "Auto-commit from papercliff observer")
+          (github-change/update-branch!)))))
 
 (defn put-content-once
   [org repo branch path content]
