@@ -13,6 +13,7 @@
     [observer.attempt :as attempt]
     [observer.date-time :as dt]
     [observer.fs :as fs]
+    [observer.markdown-templates :as md-templ]
     [taoensso.timbre :as timbre])
   (:gen-class))
 
@@ -55,6 +56,23 @@
          (format "const singleDayActions = %s;")
          (fs/save-content "single-day-actions.js"))
     (take-screenshot)
+
+    ;; commit to news website
+    (attempt/catch-all
+      #(github-api/with-changeset
+         "papercliff"
+         "news"
+         "main"
+         (fn [changeset]
+           (-> changeset
+               (github-api/put-content
+                 (md-templ/png-image-path now)
+                 (fs/image-byte-array))
+               (github-api/put-content
+                 (md-templ/image-post-path now)
+                 (md-templ/image-post-content now))))))
+
+    ;; post to social media
     (doseq [f [#(mastodon-api/image-twoot full-day-with-hashtags)
                #(twitter-api/image-tweet full-day-with-hashtags)
                #(facebook-api/image-post full-day-with-hashtags)
@@ -71,6 +89,7 @@
                #(linkedin-api/image-post full-day-with-hashtags)
                #(tumblr-api/image-post full-day-str tags)]]
       (attempt/catch-all f)))
+
   (timbre/info "image task completed")
   (System/exit 0))
 

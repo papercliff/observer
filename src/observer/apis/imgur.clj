@@ -5,8 +5,7 @@
             [observer.attempt :as attempt]
             [observer.fs :as fs]
             [taoensso.timbre :as timbre])
-  (:import (java.io File FileInputStream)
-           (java.util Base64)))
+  (:import (java.util Base64)))
 
 (defn- access-token []
   (timbre/info "getting access token from imgur")
@@ -21,14 +20,6 @@
          (json/read-str :key-fn keyword)
          :access_token)))
 
-(defn- encoded-image []
-  (let [f (File. ^String fs/screenshot-abs-path)
-        ary (byte-array (.length f))
-        is (FileInputStream. f)]
-    (.read is ary)
-    (.close is)
-    (.encodeToString (Base64/getEncoder) ary)))
-
 (defn upload-image [title]
   (let [headers {"Authorization" (str "Bearer " (access-token))}]
     (timbre/info "uploading image on imgur")
@@ -36,7 +27,9 @@
       #(-> "https://api.imgur.com/3/upload"
            (client/post
              {:headers headers
-              :form-params {:image (encoded-image)
+              :form-params {:image (.encodeToString
+                                     (Base64/getEncoder)
+                                     (fs/image-byte-array))
                             :title title
                             :type "base64"}})
            :body
