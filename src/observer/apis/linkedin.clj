@@ -52,7 +52,7 @@
            (hash-map :content-type :json
                      :headers (headers-memo)
                      :body)
-           (client/post "https://api.linkedin.com/v2/posts")))))
+           (client/post "https://api.linkedin.com/rest/posts")))))
 
 (defn- prepare-image []
   (timbre/info "preparing image upload on linkedin")
