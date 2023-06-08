@@ -22,7 +22,7 @@ content_url: %s
   [now tags]
   (format
     "all_collections/_posts/%s-%s.md"
-    (dt/->day-str now)
+    (dt/->hyphened-date-with-ms now)
     (s/join "-" tags)))
 
 (defn- yesterday-str [now]

@@ -1,6 +1,7 @@
 (ns observer.date-time
   (:require [clj-time.core :as time]
-            [clj-time.format :as time-f]))
+            [clj-time.format :as time-f]
+            [clojure.string :as s]))
 
 (defn- unparse [dt fmt]
   (time-f/unparse
@@ -12,6 +13,11 @@
 
 (defn ->day-str [dt]
   (unparse dt :date))
+
+(defn ->hyphened-date-with-ms [dt]
+  (-> dt
+      (unparse :date-hour-minute-second-ms)
+      (s/replace #"\D" "-")))
 
 (defn ->full-day-str [dt]
   (unparse dt "EEEEE, MMMMM d, yyyy"))
