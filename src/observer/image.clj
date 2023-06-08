@@ -93,4 +93,4 @@
   (timbre/info "image task completed")
   (System/exit 0))
 
-;; Comment to trigger rebuild again
+;; Comment to trigger rebuild
