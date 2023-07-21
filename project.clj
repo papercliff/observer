@@ -14,6 +14,5 @@
                  [me.raynes/fs "1.4.6"]
                  [org.clojure/clojure "1.11.1"]
                  [org.clojure/data.json "2.4.0"]
-                 [org.slf4j/slf4j-log4j12 "2.0.5"]
                  [org.clojure/tools.logging "1.2.4"]
                  [twitter-api "1.8.0"]])
