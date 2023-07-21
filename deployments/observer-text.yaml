@@ -1,0 +1,138 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: observer-text-cronjob
+spec:
+  schedule: "0 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: observer-text
+        spec:
+          containers:
+            - name: observer-text
+              image: {{ ECR_REPOSITORY_URL }}:{{ TAG }}
+              env:
+                  - name: FB_PAGE_ACCESS_TOKEN
+                    valueFrom:
+                      secretKeyRef:
+                        name: facebook
+                        key: access-token
+                  - name: GITHUB_TOKEN
+                    valueFrom:
+                      secretKeyRef:
+                        name: github
+                        key: token
+                  - name: IMGUR_CLIENT_ID
+                    valueFrom:
+                      secretKeyRef:
+                        name: imgur
+                        key: client-id
+                  - name: IMGUR_REFRESH_TOKEN
+                    valueFrom:
+                      secretKeyRef:
+                        name: imgur
+                        key: refresh-token
+                  - name: IMGUR_SECRET
+                    valueFrom:
+                      secretKeyRef:
+                        name: imgur
+                        key: secret
+                  - name: LINKEDIN_CLIENT_ID
+                    valueFrom:
+                      secretKeyRef:
+                        name: linkedin
+                        key: client-id
+                  - name: LINKEDIN_REFRESH_TOKEN
+                    valueFrom:
+                      secretKeyRef:
+                        name: linkedin
+                        key: refresh-token
+                  - name: LINKEDIN_SECRET
+                    valueFrom:
+                      secretKeyRef:
+                        name: linkedin
+                        key: secret
+                  - name: MASTODON_ACCESS_TOKEN
+                    valueFrom:
+                      secretKeyRef:
+                        name: mastodon
+                        key: access-token
+                  - name: PAPERCLIFF_CORE_URL
+                    valueFrom:
+                      secretKeyRef:
+                        name: papercliff-core
+                        key: url
+                  - name: PAPERCLIFF_CORE_HEADER_NAME
+                    valueFrom:
+                      secretKeyRef:
+                        name: rapidapi
+                        key: proxy-header
+                  - name: PAPERCLIFF_CORE_HEADER_VALUE
+                    valueFrom:
+                      secretKeyRef:
+                        name: rapidapi
+                        key: proxy-secret
+                  - name: REDDIT_CLIENT_ID
+                    valueFrom:
+                      secretKeyRef:
+                        name: reddit
+                        key: client-id
+                  - name: REDDIT_PASSWORD
+                    valueFrom:
+                      secretKeyRef:
+                        name: reddit
+                        key: password
+                  - name: REDDIT_SECRET
+                    valueFrom:
+                      secretKeyRef:
+                        name: reddit
+                        key: secret
+                  - name: TUMBLR_CONSUMER_KEY
+                    valueFrom:
+                      secretKeyRef:
+                        name: tumblr
+                        key: consumer-key
+                  - name: TUMBLR_CONSUMER_SECRET
+                    valueFrom:
+                      secretKeyRef:
+                        name: tumblr
+                        key: consumer-secret
+                  - name: TUMBLR_OAUTH_TOKEN
+                    valueFrom:
+                      secretKeyRef:
+                        name: tumblr
+                        key: oauth-token
+                  - name: TUMBLR_OAUTH_TOKEN_SECRET
+                    valueFrom:
+                      secretKeyRef:
+                        name: tumblr
+                        key: oauth-token-secret
+                  - name: TWITTER_API_ACCESS_TOKEN
+                    valueFrom:
+                      secretKeyRef:
+                        name: twitter
+                        key: access-token
+                  - name: TWITTER_API_ACCESS_TOKEN_SECRET
+                    valueFrom:
+                      secretKeyRef:
+                        name: twitter
+                        key: access-token-secret
+                  - name: TWITTER_API_KEY
+                    valueFrom:
+                      secretKeyRef:
+                        name: twitter
+                        key: api-key
+                  - name: TWITTER_API_KEY_SECRET
+                    valueFrom:
+                      secretKeyRef:
+                        name: twitter
+                        key: api-key-secret
+              args:
+                - lein
+                - run
+                - -m
+                - observer.text
+          restartPolicy: Never

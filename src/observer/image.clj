@@ -2,6 +2,7 @@
   (:require
     [clojure.data.json :as json]
     [clojure.string :as s]
+    [clojure.tools.logging :as log]
     [etaoin.api :as e]
     [observer.apis.facebook :as facebook-api]
     [observer.apis.github :as github-api]
@@ -13,8 +14,7 @@
     [observer.attempt :as attempt]
     [observer.date-time :as dt]
     [observer.fs :as fs]
-    [observer.markdown-templates :as md-templ]
-    [taoensso.timbre :as timbre])
+    [observer.markdown-templates :as md-templ])
   (:gen-class))
 
 (def tags
@@ -26,7 +26,7 @@
        (s/join " ")))
 
 (defn take-screenshot []
-  (timbre/info "taking screenshot")
+  (log/info "taking screenshot")
   (let [driver (e/chrome
                  {:headless true,
                   :size [1080 1080]})]
@@ -41,7 +41,7 @@
     (e/quit driver)))
 
 (defn -main []
-  (timbre/info "starting image task")
+  (log/info "starting image task")
   (fs/delete-res-dir)
   (github-api/clone-animated-graph)
   (let [now (dt/now)
@@ -90,7 +90,7 @@
                #(tumblr-api/image-post full-day-str tags)]]
       (attempt/catch-all f)))
 
-  (timbre/info "image task completed")
+  (log/info "image task completed")
   (System/exit 0))
 
 ;; Comment to trigger rebuild again

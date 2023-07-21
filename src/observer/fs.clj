@@ -1,7 +1,7 @@
 (ns observer.fs
   (:require [clojure.java.io :as io]
-            [me.raynes.fs :as raynes]
-            [taoensso.timbre :as timbre])
+            [clojure.tools.logging :as log]
+            [me.raynes.fs :as raynes])
   (:import (java.io File FileInputStream)))
 
 (def res-dir-path
@@ -15,13 +15,13 @@
     (io/file rel-path)))
 
 (defn delete-res-dir []
-  (timbre/info
+  (log/info
     "deleting resources directory")
   (raynes/delete-dir res-dir-path))
 
 (defn save-content
   [rel-path content]
-  (timbre/info
+  (log/info
     "saving contents to"
     (res-path rel-path))
   (spit

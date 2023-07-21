@@ -1,14 +1,14 @@
 (ns observer.apis.imgur
   (:require [clj-http.client :as client]
             [clojure.data.json :as json]
+            [clojure.tools.logging :as log]
             [environ.core :as env]
             [observer.attempt :as attempt]
-            [observer.fs :as fs]
-            [taoensso.timbre :as timbre])
+            [observer.fs :as fs])
   (:import (java.util Base64)))
 
 (defn- access-token []
-  (timbre/info "getting access token from imgur")
+  (log/info "getting access token from imgur")
   (attempt/retry
     #(-> "https://api.imgur.com/oauth2/token"
          (client/post
@@ -22,7 +22,7 @@
 
 (defn upload-image [title]
   (let [headers {"Authorization" (str "Bearer " (access-token))}]
-    (timbre/info "uploading image on imgur")
+    (log/info "uploading image on imgur")
     (attempt/retry
       #(-> "https://api.imgur.com/3/upload"
            (client/post

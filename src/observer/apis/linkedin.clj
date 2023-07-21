@@ -2,16 +2,16 @@
   (:require [clj-http.client :as client]
             [clojure.data.json :as json]
             [clojure.java.io :as io]
+            [clojure.tools.logging :as log]
             [environ.core :as env]
             [observer.attempt :as attempt]
-            [observer.fs :as fs]
-            [taoensso.timbre :as timbre]))
+            [observer.fs :as fs]))
 
 (def author
   "urn:li:organization:90787929")
 
 (defn- access-token []
-  (timbre/info "getting access token from linkedin")
+  (log/info "getting access token from linkedin")
   (attempt/retry
     #(-> "https://www.linkedin.com/oauth/v2/accessToken"
          (client/post
@@ -34,7 +34,7 @@
   ([text]
    (text-post nil text))
   ([media-id text]
-   (timbre/info "posting text on linkedin" text)
+   (log/info "posting text on linkedin" text)
    (attempt/retry
      #(->> {:author author
             :commentary text
@@ -55,7 +55,7 @@
            (client/post "https://api.linkedin.com/rest/posts")))))
 
 (defn- prepare-image []
-  (timbre/info "preparing image upload on linkedin")
+  (log/info "preparing image upload on linkedin")
   (attempt/retry
     #(-> "https://api.linkedin.com/rest/images?action=initializeUpload"
          (client/post
@@ -69,7 +69,7 @@
          :value)))
 
 (defn- upload-image [upload-url]
-  (timbre/info "uploading image on linkedin")
+  (log/info "uploading image on linkedin")
   (attempt/retry
     #(client/put
        upload-url

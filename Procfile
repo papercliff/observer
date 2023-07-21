@@ -1,1 +1,0 @@
-worker: java $JVM_OPTS -cp target/observer-standalone.jar clojure.main -m observer.text

@@ -1,5 +1,5 @@
 (ns observer.attempt
-  (:require [taoensso.timbre :as timbre]))
+  (:require [clojure.tools.logging :as log]))
 
 (def sleep-time
   5000)
@@ -11,7 +11,7 @@
   3)
 
 (defn sleep-and-execute [f]
-  (timbre/infof
+  (log/infof
     "sleeping for about %s milliseconds"
     sleep-time)
   (Thread/sleep
@@ -24,14 +24,14 @@
     (try
       (sleep-and-execute f)
       (catch Exception e
-        (timbre/warnf
+        (log/warnf
           "attempt %s failed with message %s"
           i
           (.getMessage e))
         (retry-go
           f
           (inc i))))
-    (do (timbre/error exhaust-msg)
+    (do (log/error exhaust-msg)
         (throw (Exception. ^String exhaust-msg)))))
 
 (defn retry [f]
@@ -41,6 +41,6 @@
   (try
     (f)
     (catch Exception e
-      (timbre/error
+      (log/error
         (.getMessage e)
         "occurred and suppressed"))))

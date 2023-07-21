@@ -3,25 +3,27 @@
             [clojure.data.json :as json]
             [clojure.set :as st]
             [clojure.string :as s]
+            [clojure.tools.logging :as log]
             [environ.core :as env]
             [loom.graph :as loom]
             [loom.alg :as loom-alg]
             [observer.attempt :as attempt]
-            [observer.date-time :as dt]
-            [taoensso.timbre :as timbre]))
+            [observer.date-time :as dt]))
 
 (defn- combinations [query-params]
-  (timbre/info "getting combinations" query-params)
+  (log/info "getting combinations" query-params)
   (attempt/retry
-    #(let [res (-> (env/env :papercliff-combinations-url)
+    #(let [res (-> :papercliff-core-url
+                   env/env
+                   (str "/api/v1/combinations")
                    (client/get
                      {:content-type :json
-                      :headers {(env/env :papercliff-secret-key)
-                                (env/env :papercliff-secret-value)}
+                      :headers      {(env/env :papercliff-core-header-name)
+                                     (env/env :papercliff-core-header-value)}
                       :query-params query-params})
                    :body
                    (json/read-str :key-fn keyword))]
-       (timbre/info "combinations" res)
+       (log/info "combinations" res)
        res)))
 
 (defn- combinations-since [now]
@@ -91,7 +93,7 @@
         components (->> graph
                         loom-alg/connected-components
                         (map set))
-        _ (timbre/info "reaching components" components)
+        _ (log/info "reaching components" components)
         cliques (->> graph
                      loom-alg/maximal-cliques
                      (filter
@@ -100,7 +102,7 @@
                      (sort-by count)
                      reverse
                      (map set))
-        _ (timbre/info "forming cliques" cliques)
+        _ (log/info "forming cliques" cliques)
         res (->> components
                  (mapcat
                    (fn [comp-set]
@@ -112,5 +114,5 @@
                        [cl]
                        [])))
                  (map sort))]
-    (timbre/info "selecting cliques" res)
+    (log/info "selecting cliques" res)
     (seq res)))

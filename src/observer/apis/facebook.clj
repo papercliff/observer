@@ -2,10 +2,10 @@
   (:require [clj-http.client :as client]
             [clojure.data.json :as json]
             [clojure.java.io :as io]
+            [clojure.tools.logging :as log]
             [environ.core :as env]
             [observer.attempt :as attempt]
-            [observer.fs :as fs]
-            [taoensso.timbre :as timbre]))
+            [observer.fs :as fs]))
 
 (def access-token
   (env/env :fb-page-access-token))
@@ -14,7 +14,7 @@
   ([text]
    (text-post nil text))
   ([media-id text]
-   (timbre/info "posting text on facebook" text)
+   (log/info "posting text on facebook" text)
    (attempt/retry
      #(client/post
         "https://graph.facebook.com/112918271679891/feed"
@@ -28,7 +28,7 @@
             :access_token access-token})}))))
 
 (defn image-post [title]
-  (timbre/info "posting image on facebook")
+  (log/info "posting image on facebook")
   (attempt/retry
     #(-> "https://graph.facebook.com/me/photos"
          (client/post

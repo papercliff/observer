@@ -3,12 +3,12 @@
             [clj-github.httpkit-client :as github-client]
             [clj-github.repository :as github-repo]
             [clj-http.client :as client]
+            [clojure.tools.logging :as log]
             [environ.core :as env]
             [me.raynes.fs :as raynes]
             [observer.attempt :as attempt]
             [observer.date-time :as dt]
-            [observer.fs :as fs]
-            [taoensso.timbre :as timbre]))
+            [observer.fs :as fs]))
 
 (def put-content
   "[changeset path content]
@@ -29,12 +29,12 @@
                  dt/at-start-of-prev-day
                  dt/->day-str
                  (format single-day-actions-fmt))]
-    (timbre/info "loading" url)
+    (log/info "loading" url)
     (attempt/retry
       #(-> url client/get :body))))
 
 (defn clone-animated-graph []
-  (timbre/info "cloning github repo")
+  (log/info "cloning github repo")
   (attempt/retry
     #(-> gh-token-map
          github-client/new-client
@@ -44,7 +44,7 @@
 (defn with-changeset [org repo branch f]
   (attempt/retry
     (fn []
-      (timbre/infof
+      (log/infof
         "committing github changes to %s/%s/%s"
         org repo branch)
       (-> gh-token-map

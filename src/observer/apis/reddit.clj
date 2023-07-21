@@ -1,13 +1,13 @@
 (ns observer.apis.reddit
   (:require [clj-http.client :as client]
             [clojure.data.json :as json]
+            [clojure.tools.logging :as log]
             [environ.core :as env]
             [observer.apis.imgur :as imgur-api]
-            [observer.attempt :as attempt]
-            [taoensso.timbre :as timbre]))
+            [observer.attempt :as attempt]))
 
 (defn- access-token []
-  (timbre/info "getting access token from reddit")
+  (log/info "getting access token from reddit")
   (attempt/retry
     #(-> "https://www.reddit.com/api/v1/access_token"
          (client/post
@@ -26,7 +26,7 @@
 
 (defn text-post [title description]
   (let [headers (post-headers)]
-    (timbre/info "posting text to reddit" title)
+    (log/info "posting text to reddit" title)
     (attempt/retry
       #(client/post
          "https://oauth.reddit.com/api/submit"
@@ -40,7 +40,7 @@
   (let [headers (post-headers)
         image-url (imgur-api/upload-image
                     (str "News keywords for " title))]
-    (timbre/info "posting image to reddit")
+    (log/info "posting image to reddit")
     (attempt/retry
       #(client/post
          "https://oauth.reddit.com/api/submit"

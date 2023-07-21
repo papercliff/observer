@@ -1,10 +1,10 @@
 (ns observer.apis.tumblr
   (:require
     [clojure.java.io :as io]
+    [clojure.tools.logging :as log]
     [environ.core :as env]
     [observer.attempt :as attempt]
-    [observer.fs :as fs]
-    [taoensso.timbre :as timbre])
+    [observer.fs :as fs])
   (:import (com.tumblr.jumblr JumblrClient)
            (com.tumblr.jumblr.types LinkPost PhotoPost)))
 
@@ -20,7 +20,7 @@
 
 (defn text-post
   [title link tags]
-  (timbre/info "posting text on tumblr" title link tags)
+  (log/info "posting text on tumblr" title link tags)
   (attempt/retry
     #(let [post (.newPost (client) "papercliff-api" LinkPost)]
        (.setTitle post title)
@@ -30,7 +30,7 @@
 
 (defn image-post
   [caption tags]
-  (timbre/info "posting image on tumblr")
+  (log/info "posting image on tumblr")
   (attempt/retry
     #(let [post (.newPost (client) "papercliff-api" PhotoPost)]
        (.setCaption post caption)

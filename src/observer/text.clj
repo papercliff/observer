@@ -1,5 +1,6 @@
 (ns observer.text
   (:require [clojure.string :as s]
+            [clojure.tools.logging :as log]
             [observer.apis.facebook :as facebook-api]
             [observer.apis.github :as github-api]
             [observer.apis.linkedin :as linkedin-api]
@@ -10,8 +11,7 @@
             [observer.apis.twitter :as twitter-api]
             [observer.attempt :as attempt]
             [observer.date-time :as dt]
-            [observer.markdown-templates :as md-templ]
-            [taoensso.timbre :as timbre])
+            [observer.markdown-templates :as md-templ])
   (:gen-class))
 
 (defn- search-url [now clique]
@@ -56,7 +56,7 @@
   (let [now (dt/now)
         date-hour-str (dt/->date-hour-str now)]
 
-    (timbre/info
+    (log/info
       "starting text task for"
       date-hour-str)
 
@@ -105,14 +105,10 @@
                      #(tumblr-api/text-post key-words link chosen-hashtags)]]
             (attempt/catch-all f)))))
 
-    (timbre/info
+    (log/info
       "text task completed for"
       date-hour-str)))
 
 (defn -main []
-  (while true
-    (future
-      (attempt/catch-all go))
-    (Thread/sleep
-      ;; an hour
-      (* 60 60 1000))))
+  (attempt/catch-all go)
+  (System/exit 0))

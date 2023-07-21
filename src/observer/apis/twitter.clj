@@ -1,10 +1,10 @@
 (ns observer.apis.twitter
   (:require
     [clojure.string :as s]
+    [clojure.tools.logging :as log]
     [environ.core :as env]
     [observer.attempt :as attempt]
     [observer.fs :as fs]
-    [taoensso.timbre :as timbre]
     [twitter.api.restful :as restful]
     [twitter.api.search :as search]
     [twitter.oauth :as oauth]
@@ -17,7 +17,7 @@
                           (env/env :twitter-api-access-token-secret)))
 
 (defn hashtag-popularity [tag]
-  (timbre/info "getting tag stats from twitter")
+  (log/info "getting tag stats from twitter")
   (Thread/sleep attempt/sleep-time)
   (or
     (attempt/catch-all
@@ -45,20 +45,20 @@
                   (map :id)
                   distinct
                   count)]
-         (timbre/info tag "popularity in twitter is" res)
+         (log/info tag "popularity in twitter is" res)
          res))
     0))
 
 (defn text-tweet
   [text]
-  (timbre/info "posting text on twitter" text)
+  (log/info "posting text on twitter" text)
   (attempt/retry
     #(restful/statuses-update
        :oauth-creds my-creds
        :params {:status text})))
 
 (defn image-tweet [title]
-  (timbre/info "posting image on twitter")
+  (log/info "posting image on twitter")
   (attempt/retry
     #(restful/statuses-update-with-media
        :oauth-creds my-creds
