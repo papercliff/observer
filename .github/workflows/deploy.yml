@@ -32,5 +32,5 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          tags: ${{ secrets.ECR_REPOSITORY_URL }}:{{ github.sha }}
+          tags: ${{ secrets.ECR_REPOSITORY_URL }}:${{ github.sha }}
           push: true
