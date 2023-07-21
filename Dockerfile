@@ -1,5 +1,5 @@
-# Use selenium/standalone-firefox as the base image
-FROM selenium/standalone-firefox:114.0
+# Use selenium/standalone-chrome as the base image
+FROM selenium/standalone-chrome:114.0
 
 # Set the working directory
 WORKDIR /app
