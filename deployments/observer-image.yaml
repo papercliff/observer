@@ -130,9 +130,6 @@ spec:
                       secretKeyRef:
                         name: twitter
                         key: api-key-secret
-              args:
-                - lein
-                - run
-                - -m
-                - observer.image
+              command: ["lein"]
+              args: ["run", "-m", "observer.image"]
           restartPolicy: OnFailure
