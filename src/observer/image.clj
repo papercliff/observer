@@ -28,7 +28,7 @@
 (defn take-screenshot []
   (log/info "taking screenshot")
   (let [driver (e/firefox-headless
-                 {:size [1080 1080]})]
+                 {:size [1080 1165]})]
     (->> "image.html"
          fs/res-path
          fs/absolute-path
