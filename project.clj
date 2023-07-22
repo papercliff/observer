@@ -8,7 +8,7 @@
                  [clj-http "3.12.3"]
                  [clj-time "0.15.2"]
                  [environ "1.2.0"]
-                 [etaoin "1.0.39"]
+                 [etaoin "1.0.40"]
                  [com.tumblr/jumblr "0.0.13"]
                  [dev.nubank/clj-github "0.6.2"]
                  [me.raynes/fs "1.4.6"]
