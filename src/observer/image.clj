@@ -42,7 +42,7 @@
 (defn -main []
   (log/info "starting image task")
   (fs/delete-res-dir)
-  (github-api/clone-animated-graph)
+  (github-api/clone-graph-vis)
   (let [now (dt/now)
         full-day-str (-> now
                          dt/at-start-of-prev-day

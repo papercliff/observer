@@ -33,12 +33,12 @@
     (attempt/retry
       #(-> url client/get :body))))
 
-(defn clone-animated-graph []
+(defn clone-graph-vis []
   (log/info "cloning github repo")
   (attempt/retry
     #(-> gh-token-map
          github-client/new-client
-         (github-repo/clone "papercliff" "animated-graph")
+         (github-repo/clone "papercliff" "graph-vis")
          (raynes/copy-dir fs/res-dir-path))))
 
 (defn with-changeset [org repo branch f]
