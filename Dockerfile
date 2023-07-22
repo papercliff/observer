@@ -1,13 +1,11 @@
-# Use selenium/standalone-chrome as the base image
-FROM selenium/standalone-chrome:114.0
+# Use instrumentisto/geckodriver as the base image
+FROM instrumentisto/geckodriver:115.0.2
 
 # Set the working directory
 WORKDIR /app
 
-USER root
-
-# Install curl and OpenJDK 17
-RUN apt-get update && apt-get install -y curl openjdk-17-jdk
+# Install curl, OpenJDK 17, and Firefox
+RUN apt-get update && apt-get install -y curl openjdk-17-jdk firefox-esr
 
 # Install Leiningen
 RUN mkdir -p /usr/local/bin/
