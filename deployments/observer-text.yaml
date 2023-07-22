@@ -131,5 +131,5 @@ spec:
                         name: twitter
                         key: api-key-secret
               command: ["lein"]
-              args: ["run", "-m", "observer.image"]
+              args: ["run", "-m", "observer.text"]
           restartPolicy: Never
