@@ -1,6 +1,6 @@
 docker build -t observer .
-docker run --name observer-text-job observer:latest lein run -m observer.text
-docker run --name observer-image-job observer:latest lein run -m observer.image
+docker run --entrypoint lein --name observer-text-job observer:latest run -m observer.text
+docker run --entrypoint lein --name observer-image-job observer:latest run -m observer.image
 kubectl create secret generic facebook --from-env-file=deployments/secrets/facebook.txt
 kubectl create secret generic github --from-env-file=deployments/secrets/github.txt
 kubectl create secret generic imgur --from-env-file=deployments/secrets/imgur.txt
