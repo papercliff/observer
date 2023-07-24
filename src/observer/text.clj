@@ -44,8 +44,7 @@
        (map
          #(vector
             %
-            (+ (mastodon-api/hashtag-popularity %)
-               (twitter-api/hashtag-popularity %))))
+            (mastodon-api/hashtag-popularity %)))
        (sort-by second)
        reverse
        (take 2)

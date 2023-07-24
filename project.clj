@@ -6,6 +6,7 @@
   :dependencies [[aysylu/loom "1.0.2"]
                  [ch.qos.logback/logback-classic "1.4.8"]
                  [clj-http "3.12.3"]
+                 [clj-oauth "1.5.5"]
                  [clj-time "0.15.2"]
                  [environ "1.2.0"]
                  [etaoin "1.0.40"]
@@ -14,5 +15,4 @@
                  [me.raynes/fs "1.4.6"]
                  [org.clojure/clojure "1.11.1"]
                  [org.clojure/data.json "2.4.0"]
-                 [org.clojure/tools.logging "1.2.4"]
-                 [twitter-api "1.8.0"]])
+                 [org.clojure/tools.logging "1.2.4"]])

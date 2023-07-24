@@ -110,26 +110,26 @@ spec:
                       secretKeyRef:
                         name: tumblr
                         key: oauth-token-secret
-                  - name: TWITTER_API_ACCESS_TOKEN
+                  - name: TWITTER_CONSUMER_KEY
+                    valueFrom:
+                      secretKeyRef:
+                        name: twitter
+                        key: consumer-key
+                  - name: TWITTER_CONSUMER_SECRET
+                    valueFrom:
+                      secretKeyRef:
+                        name: twitter
+                        key: consumer-secret
+                  - name: TWITTER_ACCESS_TOKEN
                     valueFrom:
                       secretKeyRef:
                         name: twitter
                         key: access-token
-                  - name: TWITTER_API_ACCESS_TOKEN_SECRET
+                  - name: TWITTER_TOKEN_SECRET
                     valueFrom:
                       secretKeyRef:
                         name: twitter
-                        key: access-token-secret
-                  - name: TWITTER_API_KEY
-                    valueFrom:
-                      secretKeyRef:
-                        name: twitter
-                        key: api-key
-                  - name: TWITTER_API_KEY_SECRET
-                    valueFrom:
-                      secretKeyRef:
-                        name: twitter
-                        key: api-key-secret
+                        key: token-secret
               command: ["lein"]
               args: ["run", "-m", "observer.text"]
           restartPolicy: Never
