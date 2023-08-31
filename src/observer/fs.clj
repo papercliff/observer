@@ -28,13 +28,8 @@
     (res-path rel-path)
     content))
 
-(def screenshot-abs-path
-  (-> "screenshot.png"
-      res-path
-      absolute-path))
-
-(defn image-byte-array []
-  (let [f (File. ^String screenshot-abs-path)
+(defn image-byte-array [image-abs-path]
+  (let [f (File. ^String image-abs-path)
         ary (byte-array (.length f))
         is (FileInputStream. f)]
     (.read is ary)

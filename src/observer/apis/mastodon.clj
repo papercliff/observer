@@ -4,8 +4,7 @@
             [clojure.java.io :as io]
             [clojure.tools.logging :as log]
             [environ.core :as env]
-            [observer.attempt :as attempt]
-            [observer.fs :as fs]))
+            [observer.attempt :as attempt]))
 
 (def headers
   {"Authorization"
@@ -49,7 +48,7 @@
                           {})
                         {:status text})}))))
 
-(defn image-twoot [title]
+(defn image-twoot [image-abs-path title]
   (log/info "posting image on mastodon")
   (attempt/retry
     #(-> "https://newsie.social/api/v1/media"
@@ -57,7 +56,7 @@
            {:headers headers
             :multipart [{:name "file"
                          :mime-type "image/png"
-                         :content (io/file fs/screenshot-abs-path)}]})
+                         :content (io/file image-abs-path)}]})
          :body
          (json/read-str :key-fn keyword)
          :id

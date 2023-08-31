@@ -4,8 +4,7 @@
             [clojure.java.io :as io]
             [clojure.tools.logging :as log]
             [environ.core :as env]
-            [observer.attempt :as attempt]
-            [observer.fs :as fs]))
+            [observer.attempt :as attempt]))
 
 (def author
   "urn:li:organization:90787929")
@@ -68,15 +67,15 @@
          (json/read-str :key-fn keyword)
          :value)))
 
-(defn- upload-image [upload-url]
+(defn- upload-image [image-abs-path upload-url]
   (log/info "uploading image on linkedin")
   (attempt/retry
     #(client/put
        upload-url
        {:headers (headers-memo)
-        :body (io/file fs/screenshot-abs-path)})))
+        :body (io/file image-abs-path)})))
 
-(defn image-post [title]
+(defn image-post [image-abs-path title]
   (let [{:keys [uploadUrl image]} (prepare-image)]
-    (upload-image uploadUrl)
+    (upload-image image-abs-path uploadUrl)
     (text-post image title)))

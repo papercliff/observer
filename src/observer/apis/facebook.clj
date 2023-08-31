@@ -4,8 +4,7 @@
             [clojure.java.io :as io]
             [clojure.tools.logging :as log]
             [environ.core :as env]
-            [observer.attempt :as attempt]
-            [observer.fs :as fs]))
+            [observer.attempt :as attempt]))
 
 (def access-token
   (env/env :fb-page-access-token))
@@ -27,7 +26,7 @@
            {:message text
             :access_token access-token})}))))
 
-(defn image-post [title]
+(defn image-post [image-abs-path title]
   (log/info "posting image on facebook")
   (attempt/retry
     #(-> "https://graph.facebook.com/me/photos"
@@ -37,7 +36,7 @@
              :access_token access-token}
             :multipart [{:name "file"
                          :mime-type "image/png"
-                         :content (io/file fs/screenshot-abs-path)}]})
+                         :content (io/file image-abs-path)}]})
          :body
          (json/read-str :key-fn keyword)
          :id

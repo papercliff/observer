@@ -20,7 +20,7 @@
          (json/read-str :key-fn keyword)
          :access_token)))
 
-(defn upload-image [title]
+(defn upload-image [image-abs-path title]
   (let [headers {"Authorization" (str "Bearer " (access-token))}]
     (log/info "uploading image on imgur")
     (attempt/retry
@@ -29,7 +29,7 @@
              {:headers headers
               :form-params {:image (.encodeToString
                                      (Base64/getEncoder)
-                                     (fs/image-byte-array))
+                                     (fs/image-byte-array image-abs-path))
                             :title title
                             :type "base64"}})
            :body

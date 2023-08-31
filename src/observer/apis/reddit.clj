@@ -36,9 +36,10 @@
                         :text description
                         :sr "r/papercliff"}}))))
 
-(defn image-post [title]
+(defn image-post [image-abs-path title]
   (let [headers (post-headers)
         image-url (imgur-api/upload-image
+                    image-abs-path
                     (str "News keywords for " title))]
     (log/info "posting image to reddit")
     (attempt/retry

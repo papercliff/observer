@@ -3,8 +3,7 @@
     [clojure.java.io :as io]
     [clojure.tools.logging :as log]
     [environ.core :as env]
-    [observer.attempt :as attempt]
-    [observer.fs :as fs])
+    [observer.attempt :as attempt])
   (:import (com.tumblr.jumblr JumblrClient)
            (com.tumblr.jumblr.types LinkPost PhotoPost)))
 
@@ -29,11 +28,11 @@
        (.save post))))
 
 (defn image-post
-  [caption tags]
+  [image-abs-path caption tags]
   (log/info "posting image on tumblr")
   (attempt/retry
     #(let [post (.newPost (client) "papercliff-api" PhotoPost)]
        (.setCaption post caption)
-       (.setData post (io/file fs/screenshot-abs-path))
+       (.setData post (io/file image-abs-path))
        (.setTags post (java.util.ArrayList. tags))
        (.save post))))

@@ -25,7 +25,7 @@
        (map #(str "#" %))
        (s/join " ")))
 
-(defn take-screenshot []
+(defn take-screenshot [image-abs-path]
   (log/info "taking screenshot")
   (let [driver (e/firefox-headless
                  {:size [1080 1165]})]
@@ -35,7 +35,7 @@
          (str "file://")
          (e/go driver))
     (e/wait (+ 60 (rand 20)))
-    (e/screenshot driver fs/screenshot-abs-path)
+    (e/screenshot driver image-abs-path)
     (e/wait 10)
     (e/quit driver)))
 
@@ -49,12 +49,15 @@
                          dt/->full-day-str)
         full-day-with-hashtags (str full-day-str
                                     "\n"
-                                    hashtags-str)]
+                                    hashtags-str)
+        image-abs-path (-> "screenshot.png"
+                           fs/res-path
+                           fs/absolute-path)]
     (->> now
          github-api/load-single-day-actions
          (format "const singleDayActions = %s;")
          (fs/save-content "single-day-actions.js"))
-    (take-screenshot)
+    (take-screenshot image-abs-path)
 
     ;; commit to news website
     (attempt/catch-all
@@ -66,16 +69,16 @@
            (-> changeset
                (github-api/put-content
                  (md-templ/png-image-path now)
-                 (fs/image-byte-array))
+                 (fs/image-byte-array image-abs-path))
                (github-api/put-content
                  (md-templ/image-post-path now)
                  (md-templ/image-post-content now))))))
 
     ;; post to social media
-    (doseq [f [#(mastodon-api/image-twoot full-day-with-hashtags)
-               #(twitter-api/image-tweet full-day-with-hashtags)
-               #(facebook-api/image-post full-day-with-hashtags)
-               #(let [image-url (reddit-api/image-post full-day-str)]
+    (doseq [f [#(mastodon-api/image-twoot image-abs-path full-day-with-hashtags)
+               #(twitter-api/image-tweet image-abs-path full-day-with-hashtags)
+               #(facebook-api/image-post image-abs-path full-day-with-hashtags)
+               #(let [image-url (reddit-api/image-post image-abs-path full-day-str)]
                   (github-api/put-content-once
                     "mrdimosthenis"
                     "BlindfoldChessTraining"
@@ -85,8 +88,8 @@
                       {:SponsorName "papercliff"
                        :SponsorImage image-url}
                       :indent true)))
-               #(linkedin-api/image-post full-day-with-hashtags)
-               #(tumblr-api/image-post full-day-str tags)]]
+               #(linkedin-api/image-post image-abs-path full-day-with-hashtags)
+               #(tumblr-api/image-post image-abs-path full-day-str tags)]]
       (attempt/catch-all f)))
 
   (log/info "image task completed")

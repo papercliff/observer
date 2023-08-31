@@ -6,7 +6,6 @@
     [clojure.tools.logging :as log]
     [environ.core :as env]
     [observer.attempt :as attempt]
-    [observer.fs :as fs]
     [oauth.client :as oauth]))
 
 (def text-endpoint-url
@@ -60,7 +59,7 @@
                              {})
                            {:text text}))}))))
 
-(defn image-tweet [title]
+(defn image-tweet [image-abs-path title]
   (log/info "posting image on twitter")
   (attempt/retry
     #(-> (client/post
@@ -71,7 +70,7 @@
               image-endpoint-url)
             :multipart
             [{:name    "media"
-              :content (io/file fs/screenshot-abs-path)}]})
+              :content (io/file image-abs-path)}]})
          :body
          (json/read-str :key-fn keyword)
          :media_id
