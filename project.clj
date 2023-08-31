@@ -11,6 +11,7 @@
                  [environ "1.2.0"]
                  [etaoin "1.0.40"]
                  [com.tumblr/jumblr "0.0.13"]
+                 [com.kennycason/kumo-core "1.28"]
                  [dev.nubank/clj-github "0.6.2"]
                  [me.raynes/fs "1.4.6"]
                  [org.clojure/clojure "1.11.1"]
