@@ -5,13 +5,13 @@
             [observer.apis.github :as github-api]
             [observer.apis.linkedin :as linkedin-api]
             [observer.apis.mastodon :as mastodon-api]
-            [observer.apis.papercliff :as ppf-api]
             [observer.apis.reddit :as reddit-api]
             [observer.apis.tumblr :as tumblr-api]
             [observer.apis.twitter :as twitter-api]
             [observer.attempt :as attempt]
             [observer.date-time :as dt]
-            [observer.markdown-templates :as md-templ])
+            [observer.markdown-templates :as md-templ]
+            [observer.papercliff-data :as ppf-data])
   (:gen-class))
 
 (defn- search-url [now clique]
@@ -59,7 +59,7 @@
       "starting text task for"
       date-hour-str)
 
-    (when-let [cliques-all (ppf-api/selected-cliques now)]
+    (when-let [cliques-all (ppf-data/selected-cliques now)]
 
       ;; commit to news website
       (attempt/catch-all
