@@ -11,8 +11,6 @@ kubectl create secret generic rapidapi --from-env-file=deployments/secrets/rapid
 kubectl create secret generic reddit --from-env-file=deployments/secrets/reddit.txt
 kubectl create secret generic tumblr --from-env-file=deployments/secrets/tumblr.txt
 kubectl create secret generic twitter --from-env-file=deployments/secrets/twitter.txt
-kubectl apply -f deployments/observer-text.yaml
-kubectl apply -f deployments/observer-image.yaml
 
 
 
