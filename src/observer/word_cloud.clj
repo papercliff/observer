@@ -1,4 +1,5 @@
 (ns observer.word-cloud
+  (:require [observer.fs :as fs])
   (:import (com.kennycason.kumo WordFrequency WordCloud CollisionMode)
            (com.kennycason.kumo.bg PixelBoundaryBackground)
            (com.kennycason.kumo.font.scale LinearFontScalar)
@@ -13,13 +14,12 @@
 (def height 607)
 
 (def background-color
-  (Color. 10 20 24))
+  (Color. 255 255 255))
 
 (def color-palette
   (map
     #(Color. %)
     [0x97C2FC
-     0xFFFF00
      0xFB7E81
      0x7BE141
      0xEB7DF4
@@ -50,23 +50,27 @@
         "after" "above" "below" "to" "from" "up" "down" "in" "out" "on" "off" "over" "under" "again" "further" "then"
         "once" "here" "there" "when" "where" "why" "how" "all" "any" "both" "each" "few" "more" "most" "other" "some"
         "such" "no" "nor" "not" "only" "own" "same" "so" "than" "too" "very" "can" "will" "just" "don" "should" "now"]
-       (map
-         #(hash-map
-            :word %
-            :frequency (inc (rand-int 2))))
-       (repeat 10)
+       (repeat 5)
        (apply concat)
-       shuffle))
+       shuffle
+       (map
+         #(WordFrequency.
+            % (inc (rand-int 2))))))
 
 (defn- word-frequencies [words]
-  (map
-    (fn [{:keys [word frequency]}]
-      (WordFrequency. word frequency))
-    (concat
-      (map #(update % :frequency * 10) words)
-      (stop-words))))
+  (concat
+    (->> words
+         (mapcat
+           (fn [{:keys [keyword agencies]}]
+             (repeatedly
+               agencies
+               #(WordFrequency.
+                  keyword
+                  (+ 10 (rand-int 10))))))
+         shuffle)
+    (stop-words)))
 
-(defn save-cloud-image [output-path]
+(defn- save-cloud-image [output-path]
   (let [image (BufferedImage. width height BufferedImage/TYPE_INT_ARGB)
         g (.createGraphics image)
         number-of-circles 16
@@ -94,10 +98,10 @@
     (.dispose g)
     (ImageIO/write image "PNG" (File. ^String output-path))))
 
-(defn create [cloud-path output-path words]
+(defn- save-word-cloud-image [cloud-path output-path words]
   (let [dimension (Dimension. width height)
         word-cloud (WordCloud. dimension CollisionMode/PIXEL_PERFECT)]
-    (.setPadding word-cloud 2)
+    (.setPadding word-cloud 5)
     (.setBackground word-cloud (PixelBoundaryBackground. cloud-path))
     (.setBackgroundColor word-cloud background-color)
     (.setColorPalette word-cloud (ColorPalette. color-palette))
@@ -105,3 +109,10 @@
     (.setAngleGenerator word-cloud (AngleGenerator. -10 10 10))
     (.build word-cloud (word-frequencies words))
     (.writeToFile word-cloud output-path)))
+
+(defn create [ppf-data]
+  (let [cloud-path (fs/random-abs-path "png")
+        word-cloud-path (fs/random-abs-path "png")]
+    (save-cloud-image cloud-path)
+    (save-word-cloud-image cloud-path word-cloud-path ppf-data)
+    word-cloud-path))

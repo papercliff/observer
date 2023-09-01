@@ -2,7 +2,8 @@
   (:require [clojure.java.io :as io]
             [clojure.tools.logging :as log]
             [me.raynes.fs :as raynes])
-  (:import (java.io File FileInputStream)))
+  (:import (java.io File FileInputStream)
+           (java.util UUID)))
 
 (def res-dir-path
   "resources")
@@ -13,6 +14,12 @@
 (defn absolute-path [rel-path]
   (.getAbsolutePath
     (io/file rel-path)))
+
+(defn random-abs-path [ext]
+  (-> (UUID/randomUUID)
+      (str "." ext)
+      res-path
+      absolute-path))
 
 (defn delete-res-dir []
   (log/info
