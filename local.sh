@@ -24,7 +24,6 @@ sed -i "s|{{ ECR_REPOSITORY_URL }}|$ECR_REPOSITORY_URL|g" deployments/observer-t
 sed -i "s|{{ TAG }}|$LATEST_TAG|g" deployments/observer-text.yaml && \
 sed -i "s|{{ ECR_REPOSITORY_URL }}|$ECR_REPOSITORY_URL|g" deployments/observer-image.yaml && \
 sed -i "s|{{ TAG }}|$LATEST_TAG|g" deployments/observer-image.yaml && \
-sed -i "s|{{ SSL_CERT_ARN }}|$SSL_CERT_ARN|g" deployments/observer-image.yaml && \
 kubectl apply -f deployments/observer-text.yaml && \
 kubectl apply -f deployments/observer-image.yaml && \
 mv deployments/observer-text.yaml.bak deployments/observer-text.yaml && \
