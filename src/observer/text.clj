@@ -11,7 +11,8 @@
             [observer.attempt :as attempt]
             [observer.date-time :as dt]
             [observer.markdown-templates :as md-templ]
-            [observer.papercliff-data :as ppf-data])
+            [observer.papercliff-data :as ppf-data]
+            [observer.word-cloud :as wd-cloud])
   (:gen-class))
 
 (defn- search-url [now clique]
@@ -84,7 +85,11 @@
 
       ;; post to social media
       (doseq [clique cliques-all]
-        (let [key-words (s/join " · " clique)
+        (let [word-cloud-path (wd-cloud/create
+                                (ppf-data/selected-context-keywords
+                                 now
+                                 clique))
+              key-words (s/join " · " clique)
               link (search-url now clique)
               chosen-hashtags (chosen-tags clique)
               hashtags (->> chosen-hashtags
@@ -96,11 +101,11 @@
                                        link
                                        "\n"
                                        hashtags)]
-          (doseq [f [#(mastodon-api/text-twoot keywords+link+hashtags)
-                     #(twitter-api/text-tweet keywords+link+hashtags)
-                     #(facebook-api/text-post keywords+link+hashtags)
+          (doseq [f [#(mastodon-api/image-twoot word-cloud-path keywords+link+hashtags)
+                     #(twitter-api/image-tweet word-cloud-path keywords+link+hashtags)
+                     #(facebook-api/image-post word-cloud-path keywords+link+hashtags)
                      #(reddit-api/text-post key-words link)
-                     #(linkedin-api/text-post keywords+link+hashtags)
+                     #(linkedin-api/image-post word-cloud-path keywords+link+hashtags)
                      #(tumblr-api/text-post key-words link chosen-hashtags)]]
             (attempt/catch-all f)))))
 

@@ -57,9 +57,9 @@
          #(WordFrequency.
             % (inc (rand-int 2))))))
 
-(defn- word-frequencies [words]
+(defn- word-frequencies [selected-context-keywords]
   (concat
-    (->> words
+    (->> selected-context-keywords
          (mapcat
            (fn [{:keys [keyword agencies]}]
              (repeatedly
@@ -98,21 +98,25 @@
     (.dispose g)
     (ImageIO/write image "PNG" (File. ^String output-path))))
 
-(defn- save-word-cloud-image [cloud-path output-path words]
+(defn- save-word-cloud-image
+  [cloud-path output-path selected-context-keywords]
   (let [dimension (Dimension. width height)
         word-cloud (WordCloud. dimension CollisionMode/PIXEL_PERFECT)]
     (.setPadding word-cloud 5)
-    (.setBackground word-cloud (PixelBoundaryBackground. cloud-path))
+    (.setBackground word-cloud (PixelBoundaryBackground. ^String cloud-path))
     (.setBackgroundColor word-cloud background-color)
     (.setColorPalette word-cloud (ColorPalette. color-palette))
     (.setFontScalar word-cloud (LinearFontScalar. 5 50))
     (.setAngleGenerator word-cloud (AngleGenerator. -10 10 10))
-    (.build word-cloud (word-frequencies words))
+    (.build word-cloud (word-frequencies selected-context-keywords))
     (.writeToFile word-cloud output-path)))
 
-(defn create [ppf-data]
+(defn create [selected-context-keywords]
   (let [cloud-path (fs/random-abs-path "png")
         word-cloud-path (fs/random-abs-path "png")]
     (save-cloud-image cloud-path)
-    (save-word-cloud-image cloud-path word-cloud-path ppf-data)
+    (save-word-cloud-image
+      cloud-path
+      word-cloud-path
+      selected-context-keywords)
     word-cloud-path))

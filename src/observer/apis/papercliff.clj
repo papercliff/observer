@@ -23,3 +23,6 @@
 
 (defn combinations [query-params]
   (api-data "/api/v1/combinations" query-params))
+
+(defn context-keywords [query-params]
+  (api-data "/api/v1/context_keywords" query-params))

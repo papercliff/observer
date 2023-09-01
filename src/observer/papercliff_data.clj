@@ -97,3 +97,21 @@
                  (map sort))]
     (log/info "selecting cliques" res)
     (seq res)))
+
+(defn selected-context-keywords [now clique]
+  (let [from (dt/->date-hour-str
+               (dt/minutes-ago
+                 now
+                 (* 24.25 60)))
+        to (dt/->date-hour-str
+             (dt/minutes-ago
+               now
+               (* 0.25 60)))
+        terms (s/join "-" clique)]
+    (->> {:from  from
+          :to    to
+          :terms terms}
+         ppf-api/context-keywords
+         (take-while
+           (fn [{:keys [agencies]}]
+             (>= agencies 2))))))
