@@ -43,23 +43,23 @@
                     title)
         _ (log/info "posting image to reddit")
         thing-id (attempt/retry
-                   #(-> "https://oauth.reddit.com/api/submit"
-                        (client/post
-                          {:headers     headers
-                           :form-params {:title title
-                                         :kind  "link"
-                                         :url   image-url
-                                         :sr    "r/papercliff"}})
-                        :body
-                        (json/read-str :key-fn keyword)
-                        :jquery
-                        (take 11)
-                        last
-                        last
-                        first
-                        (re-find #"/comments/(\w+)/")
-                        second
-                        (str "t3_")))]
+                   #(->> {:headers     headers
+                          :form-params {:title title
+                                        :kind  "link"
+                                        :url   image-url
+                                        :sr    "r/papercliff"}}
+                         (client/post
+                           "https://oauth.reddit.com/api/submit")
+                         ((fn [{:keys [body]}]
+                            (json/read-str body :key-fn keyword)))
+                         :jquery
+                         (take 11)
+                         last
+                         last
+                         first
+                         (re-find #"/comments/(\w+)/")
+                         second
+                         (str "t3_")))]
     [image-url thing-id]))
 
 (defn write-comment [thing-id comment]
