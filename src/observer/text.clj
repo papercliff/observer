@@ -104,9 +104,10 @@
           (doseq [f [#(mastodon-api/image-twoot word-cloud-path keywords+link+hashtags)
                      #(twitter-api/image-tweet word-cloud-path keywords+link+hashtags)
                      #(facebook-api/image-post word-cloud-path keywords+link+hashtags)
-                     #(reddit-api/text-post key-words link)
+                     #(let [[_ thing-id] (reddit-api/image-post word-cloud-path key-words)]
+                        (reddit-api/write-comment thing-id link))
                      #(linkedin-api/image-post word-cloud-path keywords+link+hashtags)
-                     #(tumblr-api/text-post key-words link chosen-hashtags)]]
+                     #(tumblr-api/image-with-link-post word-cloud-path key-words link chosen-hashtags)]]
             (attempt/catch-all f)))))
 
     (log/info

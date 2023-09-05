@@ -27,6 +27,17 @@
        (.setTags post (java.util.ArrayList. tags))
        (.save post))))
 
+(defn image-with-link-post
+  [image-abs-path caption link tags]
+  (log/info "posting image with link on tumblr")
+  (attempt/retry
+    #(let [post (.newPost (client) "papercliff-api" PhotoPost)]
+       (.setCaption post caption)
+       (.setData post (io/file image-abs-path))
+       (.setLinkUrl post link)
+       (.setTags post (java.util.ArrayList. tags))
+       (.save post))))
+
 (defn image-post
   [image-abs-path caption tags]
   (log/info "posting image on tumblr")

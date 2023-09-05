@@ -78,7 +78,7 @@
     (doseq [f [#(mastodon-api/image-twoot image-abs-path full-day-with-hashtags)
                #(twitter-api/image-tweet image-abs-path full-day-with-hashtags)
                #(facebook-api/image-post image-abs-path full-day-with-hashtags)
-               #(let [image-url (reddit-api/image-post image-abs-path full-day-str)]
+               #(let [[image-url _] (reddit-api/image-post image-abs-path full-day-str)]
                   (github-api/put-content-once
                     "mrdimosthenis"
                     "BlindfoldChessTraining"
