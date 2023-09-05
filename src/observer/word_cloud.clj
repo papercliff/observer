@@ -46,14 +46,14 @@
 (defn- word-frequencies [selected-context-keywords]
   (concat
     (->> selected-context-keywords
-         (mapcat
+         (map
            (fn [{:keys [keyword agencies]}]
-             (repeatedly
-               agencies
-               #(WordFrequency.
-                  keyword
-                  (+ 10 (rand-int 10))))))
-         shuffle)
+             (WordFrequency.
+               keyword
+               (+ 10 agencies))))
+         shuffle
+         (repeat 2)
+         (apply concat))
     (stop-words)))
 
 (defn- save-cloud-image [output-path]
