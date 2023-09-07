@@ -52,7 +52,7 @@
                keyword
                (+ 10 agencies))))
          shuffle
-         (repeat 5)
+         (repeat 3)
          (apply concat))
     (stop-words)))
 
