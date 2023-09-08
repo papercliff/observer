@@ -40,6 +40,64 @@
     (e/wait 10)
     (e/quit driver)))
 
+(defn- gh-files-to-delete [now]
+  (let [posts-dir "all_collections/_posts"
+        images-dir "assets/images"
+
+        posts-to-delete
+        (->> posts-dir
+             (github-api/get-dir-filenames!
+               "papercliff"
+               "news")
+             (filter
+               (fn [filename]
+                 (some-> filename
+                         (subs 0 10)
+                         dt/safe-parse
+                         (dt/interval-in-days now)
+                         (> 90))))
+             (map
+               (fn [filename]
+                 (str posts-dir "/" filename))))
+
+        images-to-delete
+        (->> images-dir
+             (github-api/get-dir-filenames!
+               "papercliff"
+               "news")
+             (filter
+               (fn [filename]
+                 (some-> filename
+                         (subs 0 10)
+                         dt/safe-parse
+                         (dt/interval-in-days now)
+                         (> 7))))
+             (map
+               (fn [filename]
+                 (str images-dir "/" filename))))]
+    (concat posts-to-delete images-to-delete)))
+
+(defn- update-gh-news-site [now image-abs-path]
+  (attempt/catch-all
+    #(github-api/with-changeset
+       "papercliff"
+       "news"
+       "main"
+       (fn [changeset]
+         (-> (fn [acc path]
+               (github-api/delete
+                 acc
+                 path))
+             (reduce
+               changeset
+               (gh-files-to-delete now))
+             (github-api/put-content
+               (md-templ/png-image-path now)
+               (fs/image-byte-array image-abs-path))
+             (github-api/put-content
+               (md-templ/image-post-path now)
+               (md-templ/image-post-content now)))))))
+
 (defn -main []
   (log/info "starting image task")
   (fs/delete-res-dir)
@@ -60,20 +118,7 @@
          (fs/save-content "single-day-actions.js"))
     (take-screenshot image-abs-path)
 
-    ;; commit to news website
-    (attempt/catch-all
-      #(github-api/with-changeset
-         "papercliff"
-         "news"
-         "main"
-         (fn [changeset]
-           (-> changeset
-               (github-api/put-content
-                 (md-templ/png-image-path now)
-                 (fs/image-byte-array image-abs-path))
-               (github-api/put-content
-                 (md-templ/image-post-path now)
-                 (md-templ/image-post-content now))))))
+    (update-gh-news-site now image-abs-path)
 
     ;; post to social media
     (doseq [f [#(mastodon-api/image-twoot image-abs-path full-day-with-hashtags)

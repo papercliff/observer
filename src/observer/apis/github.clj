@@ -1,5 +1,6 @@
 (ns observer.apis.github
   (:require [clj-github.changeset :as github-change]
+            [clj-github.client-utils :as gh-ut]
             [clj-github.httpkit-client :as github-client]
             [clj-github.repository :as github-repo]
             [clj-http.client :as client]
@@ -18,11 +19,28 @@
   It creates a new file if it does not exist yet."
   github-change/put-content)
 
+(def delete
+  "[revision path]
+
+  Returns a new changeset with the file under path deleted."
+  github-change/delete)
+
 (def single-day-actions-fmt
   "https://raw.githubusercontent.com/papercliff/historical-data/master/transformed/%s-single-day-actions.json")
 
 (def gh-token-map
   {:token (env/env :github-token)})
+
+(defn get-dir-filenames!
+  "Returns the list of the filenames placed in the `dir`
+  of the repository's default branch."
+  ([org repo dir]
+   (->> (format "/repos/%s/%s/contents/%s" org repo dir)
+        (hash-map :method :get, :path)
+        (gh-ut/fetch-body!
+          (github-client/new-client
+            gh-token-map))
+        (map :name))))
 
 (defn load-single-day-actions [now]
   (let [url (->> now

@@ -25,6 +25,18 @@
 (defn ->us-day-str [dt]
   (unparse dt "M/d/yyyy"))
 
+(defn safe-parse [v]
+  (try
+    (time-f/parse
+      (time-f/formatter
+        :date)
+      v)
+    (catch Exception _ nil)))
+
+(defn interval-in-days [dt-a dt-b]
+  (time/in-days
+    (time/interval dt-a dt-b)))
+
 (defn minutes-ago [dt hours]
   (time/minus
     dt
