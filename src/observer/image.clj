@@ -44,6 +44,14 @@
   (let [posts-dir "all_collections/_posts"
         images-dir "assets/images"
 
+        image-del-pred
+        (fn [filename]
+          (some-> filename
+                  (subs 0 10)
+                  dt/safe-parse
+                  (dt/interval-in-days now)
+                  (> 7)))
+
         posts-to-delete
         (->> posts-dir
              (github-api/get-dir-filenames!
@@ -51,11 +59,13 @@
                "news")
              (filter
                (fn [filename]
-                 (some-> filename
-                         (subs 0 10)
-                         dt/safe-parse
-                         (dt/interval-in-days now)
-                         (> 90))))
+                 (if (.contains filename "daily-keywords.md")
+                   (image-del-pred filename)
+                   (some-> filename
+                           (subs 0 10)
+                           dt/safe-parse
+                           (dt/interval-in-days now)
+                           (> 90)))))
              (map
                (fn [filename]
                  (str posts-dir "/" filename))))
@@ -65,13 +75,7 @@
              (github-api/get-dir-filenames!
                "papercliff"
                "news")
-             (filter
-               (fn [filename]
-                 (some-> filename
-                         (subs 0 10)
-                         dt/safe-parse
-                         (dt/interval-in-days now)
-                         (> 7))))
+             (filter image-del-pred)
              (map
                (fn [filename]
                  (str images-dir "/" filename))))]
