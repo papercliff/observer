@@ -75,7 +75,7 @@
                  (github-api/put-content
                    acc
                    (md-templ/text-post-path
-                     (dt/now)
+                     now
                      clique)
                    (md-templ/text-post-content
                      now
