@@ -3,6 +3,7 @@
             [clojure.tools.logging :as log]
             [observer.apis.facebook :as facebook-api]
             [observer.apis.github :as github-api]
+            [observer.apis.instagram :as insta-api]
             [observer.apis.linkedin :as linkedin-api]
             [observer.apis.mastodon :as mastodon-api]
             [observer.apis.reddit :as reddit-api]
@@ -104,8 +105,9 @@
           (doseq [f [#(mastodon-api/image-twoot word-cloud-path keywords+link+hashtags)
                      #(twitter-api/image-tweet word-cloud-path keywords+link+hashtags)
                      #(facebook-api/image-post word-cloud-path keywords+link+hashtags)
-                     #(let [[_ thing-id] (reddit-api/image-post word-cloud-path key-words)]
-                        (reddit-api/write-comment thing-id link))
+                     #(let [[image-url thing-id] (reddit-api/image-post word-cloud-path key-words)]
+                        (reddit-api/write-comment thing-id link)
+                        (insta-api/image-post image-url hashtags))
                      #(linkedin-api/image-post word-cloud-path keywords+link+hashtags)
                      #(tumblr-api/image-with-link-post word-cloud-path key-words link chosen-hashtags)]]
             (attempt/catch-all f)))))

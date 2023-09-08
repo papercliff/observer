@@ -6,6 +6,7 @@
     [etaoin.api :as e]
     [observer.apis.facebook :as facebook-api]
     [observer.apis.github :as github-api]
+    [observer.apis.instagram :as insta-api]
     [observer.apis.linkedin :as linkedin-api]
     [observer.apis.mastodon :as mastodon-api]
     [observer.apis.reddit :as reddit-api]
@@ -79,6 +80,7 @@
                #(twitter-api/image-tweet image-abs-path full-day-with-hashtags)
                #(facebook-api/image-post image-abs-path full-day-with-hashtags)
                #(let [[image-url _] (reddit-api/image-post image-abs-path full-day-str)]
+                  (insta-api/image-post image-url full-day-with-hashtags)
                   (github-api/put-content-once
                     "mrdimosthenis"
                     "BlindfoldChessTraining"
