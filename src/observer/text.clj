@@ -33,6 +33,9 @@
          #(vector
             %
             (mastodon-api/hashtag-popularity %)))
+       (filter
+         (fn [[_ popularity]]
+           (> popularity 0)))
        (sort-by second)
        reverse
        (take 2)
