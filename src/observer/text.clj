@@ -24,25 +24,11 @@
        ",cd_max:"
        (-> now dt/at-start-of-next-day dt/->us-day-str)))
 
-(defn- tag-candidates [key-words]
-  (let [filtered-words
-        (filter
-          (fn [w]
-            (every?
-              (fn [chr]
-                (Character/isLetter ^Character chr))
-              w))
-          key-words)]
-    (concat
-      filtered-words
-      (for [a filtered-words
-            b filtered-words
-            :when (not= a b)]
-        (str a b)))))
-
-(defn- chosen-tags [key-words]
-  (->> key-words
-       tag-candidates
+(defn- chosen-tags [context-keywords]
+  (->> (for [a context-keywords
+             b context-keywords
+             :when (not= a b)]
+         (str a b))
        (map
          #(vector
             %
@@ -86,16 +72,14 @@
 
       ;; post to social media
       (doseq [clique cliques-all]
-        (let [word-cloud-path (wd-cloud/create
-                                (ppf-data/selected-context-keywords
-                                 now
-                                 clique))
-              key-words (s/join " · " clique)
-              link (search-url now clique)
-              chosen-hashtags (chosen-tags clique)
+        (let [context-keywords (ppf-data/selected-context-keywords now clique)
+              chosen-hashtags (chosen-tags (map :keyword context-keywords))
               hashtags (->> chosen-hashtags
                             (map #(str "#" %))
                             (s/join " "))
+              word-cloud-path (wd-cloud/create context-keywords)
+              key-words (s/join " · " clique)
+              link (search-url now clique)
               keywords+link+hashtags (str
                                        key-words
                                        "\n"
